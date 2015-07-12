@@ -1,11 +1,14 @@
 # sesh
 Shell
 
-1) КОМПИЛЯЦИЯ. 
-	Происходит посредством команды "make -f Makefile" в каталоге sesh.
-2) ЗАПУСК ПРОГРАММЫ.
-	"./sesh.c" в каталоге sesh/src
-3) РАБОТА С GIT.
+# КОМПИЛЯЦИЯ. 
+
+Происходит посредством команды `make` в каталоге sesh.
+
+# ЗАПУСК ПРОГРАММЫ.
+`bin/sesh`
+
+# РАБОТА С GIT.
 	"git clone git@github.com:artemsmirnov/sesh.git" - каталог с выписанной 
 							с github.com веткой master.
 	"git submodule update --init" - используем для восстановления целостного 
