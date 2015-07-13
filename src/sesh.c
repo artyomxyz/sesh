@@ -47,6 +47,8 @@ int main(int argc, char *argv[])
 		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 		return 0;
 	}
+
+	printf("Hello, World!\n");
 	
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
