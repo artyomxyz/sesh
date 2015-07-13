@@ -2,6 +2,8 @@
 #include <deps/argtable3/argtable3.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* Объявление двух переменных для хранения управляющих структур */
 struct termios _savetty;
@@ -16,9 +18,9 @@ void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
 void cmd_his(char* _str, char* _com);
 void cmd_help(char* _str, char* _com);
-void cmd_exep(char* _str, char* _com);
-int main(int argc, char *argv[])
-{
+void cmd_exec(char* _str, char* _com);
+
+int main(int argc, char *argv[]) {
 	/* Таблица аргументов */
 	void *argtable[] = {
 		help    = arg_litn("h", "help", 0, 1, "Display this help and exit"),
@@ -60,26 +62,29 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	change_driver(struct termios* _savetty,struct termios* _tty);
+	change_driver(&_savetty, &_tty);
 	
 //main lex
-	char typecom[][8] = { "cd", "history", "help", "exep", "exit" };
-	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_his, cmd_help, cmd_exep };
+	char typecom[][8] = { "cd", "history", "help", "exit" };
+	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_his, cmd_help};
 
 	int i = 0;
 	char com[80], str[80];
 
 
-	do
-	{
+	do {
 		read_str(str, com);
-		for (i = 0; i < 4; i++)
-		{
-			if (strcmp(com, typecom[i]) == 0)
+		for (i = 0; i < 4; i++) {
+			if (strcmp(com, typecom[i]) == 0) {
 				arr_func[i](str, com);
+				break;
+			}
 		}
-		i = 0;
-	} while (strcmp(com, typecom[4]) != 0);
+
+		if (i == 4) {
+			cmd_exec(str, com);
+		}
+	} while (strcmp(com, typecom[3]) != 0);
 
 	/* exit */
 
@@ -87,28 +92,25 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-change_driver(struct termios* savetty,struct termios* tty)
-{
+void change_driver(struct termios* savetty,struct termios* tty) {
 	if ( !isatty(0) ) { /*Проверка: стандартный ввод - терминал?*/
- 	 fprintf (stderr, "stdin not terminal\n");
- 	 exit (1); /* Ст. ввод был перенаправлен на файл, канал и т.п. */
- 	 };
+		fprintf (stderr, "stdin not terminal\n");
+		exit (1); /* Ст. ввод был перенаправлен на файл, канал и т.п. */
+ 	};
 
-	tcgetattr (0, &tty);
+	tcgetattr (0, tty);
 	savetty = tty; /* Сохранить упр. информацию канонического режима */
-	tty.c_lflag &= ~(ICANON|ECHO|ISIG);
-	tty.c_cc[VMIN] = 1;
-	tcsetattr (0, TCSAFLUSH, &tty);
+	tty->c_lflag &= ~(ICANON|ECHO|ISIG);
+	tty->c_cc[VMIN] = 1;
+	tcsetattr (0, TCSAFLUSH, tty);
 }
 
 //funct	
-	void read_str(char* _str, char* _com)
-{
+void read_str(char* _str, char* _com) {
 
 	int i = 0;
 
-	do
-	{
+	do {
 		read(0, &_str[i],1);
 		i++;
 	} while ((int)_str[i - 1] != 10);
@@ -128,5 +130,4 @@ change_driver(struct termios* savetty,struct termios* tty)
 void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
 void cmd_his(char* _str, char* _com) { printf("This is hystory\n"); };
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
-void cmd_exep(char* _str, char* _com) { printf("This is exep\n"); };
-	
+void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
