@@ -129,4 +129,3 @@ void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
 void cmd_his(char* _str, char* _com) { printf("This is hystory\n"); };
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
 void cmd_exep(char* _str, char* _com) { printf("This is exep\n"); };
-	
