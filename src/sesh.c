@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <stdio.h>
 #include <deps/argtable3/argtable3.h>
 
 /* Variables that stores the information about command line arguments */
