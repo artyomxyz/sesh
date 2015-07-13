@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (version->count > 0) {
+	if (version->count >0) {
 		printf("Version: %s %s\n", progname, progversion);
 
 		arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
