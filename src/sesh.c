@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /* Declaration of tty control structures */
 struct termios _savetty;
@@ -162,4 +163,20 @@ void save_cmd_in_history(char* _com)
 	fclose(pfile);
 }
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
-void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
+void cmd_exec(char* _str, char* _com)
+{ 
+	pid_t p;
+	p=0;
+	char* argv[]={sizeof(char[80]),0};
+	char home[82]="./";
+	argv[0]=strcat(home,_com);
+	p=fork();
+	wait();
+	if (p==0){
+		if (execv(argv[0],&argv[0])==-1){
+		printf("No such file: ");
+		puts(argv[0]);
+		}
+		exit(-1);
+	}
+};
