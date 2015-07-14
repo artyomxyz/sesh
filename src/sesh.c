@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #define STDIN_FILENO 0
 
 /* Declaration of tty control structures */
@@ -12,11 +13,14 @@ struct termios old_tty, new_tty;
 struct arg_lit *help, *version;
 struct arg_end *end;
 
+char* dir[256];
+
 //protipes
 void set_driver();
 void reset_driver();
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
+void cmd_cd_dir(char* _str, struct shell_state * dir);
 void cmd_history(char* _str, char* _com);
 void save_cmd_in_history(char* _com);
 void cmd_help(char* _str, char* _com);
@@ -70,11 +74,16 @@ int main(int argc, char *argv[]) {
 	char typecom[][8] = { "cd", "history", "help", "exit" };
 	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_history, cmd_help};
 
+
+
 	int i = 0;
 	char com[80], str[80];
-
+	
 
 	do {
+		getcwd(dir, 256);
+		printf("%s > ", dir);
+
 		read_str(str, com);
 		save_cmd_in_history(com);
 		for (i = 0; i < 4; i++) {
@@ -87,12 +96,15 @@ int main(int argc, char *argv[]) {
 		if (i == 4) {
 			cmd_exec(str, com);
 		}
+		
+		
 	} while (strcmp(com, typecom[3]) != 0);
 
-	/* exit */
+	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
+
 }
 
 void set_driver() {
@@ -132,7 +144,15 @@ void read_str(char* _str, char* _com) {
 	puts(_com);
 }
 
-void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
+void cmd_cd(char* _str, char* _com) 
+{ 
+	int i = chdir(_str+3);
+	printf("\n[%s]\n",_str+3);
+	if (i != 0) {
+		printf("\nnot moved\n");
+	}
+};
+
 void cmd_history(char* _str, char* _com)
 {
 	char str[50];
