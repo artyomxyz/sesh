@@ -12,7 +12,8 @@ struct termios _tty;
 struct arg_lit *help, *version;
 struct arg_end *end;
 
-//protipes
+
+//prototypes
 void change_driver(struct termios* savetty,struct termios* tty);
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
@@ -161,5 +162,19 @@ void save_cmd_in_history(char* _com)
 	fputs("\n",pfile);
 	fclose(pfile);
 }
-void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
+void cmd_help(char* _str, char* _com) 
+{
+	char str[50];
+	FILE *pfile;
+	pfile=fopen(".sesh_help","r");
+	if (pfile==NULL)
+		puts("Sorry, help is unavailable now.\n");
+	else
+	{
+		puts("This is help:");
+		while (fgets(str,50,pfile)!=NULL)
+			printf("%s",str);
+	}
+	fclose(pfile);
+}
 void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
