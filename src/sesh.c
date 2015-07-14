@@ -7,18 +7,23 @@
 #include <unistd.h>
 #include <stdarg.h>
 #define maxargs 255
+#define STDIN_FILENO 0
+
 
 /* Declaration of tty control structures */
-struct termios _savetty;
-struct termios _tty;
+struct termios old_tty, new_tty;
 /* Variables with information about cli arguments */
 struct arg_lit *help, *version;
 struct arg_end *end;
 
+char* dir[256];
+
 //protipes
-void change_driver(struct termios* savetty,struct termios* tty);
+void set_driver();
+void reset_driver();
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
+void cmd_cd_dir(char* _str, struct shell_state * dir);
 void cmd_history(char* _str, char* _com);
 void save_cmd_in_history(char* _com);
 void cmd_help(char* _str, char* _com);
@@ -66,17 +71,22 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	change_driver(&_savetty, &_tty);
+	set_driver();
 	
 //main lex
 	char typecom[][8] = { "cd", "history", "help", "exit" };
 	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_history, cmd_help};
 
+
+
 	int i = 0;
 	char com[80], str[80];
-
+	
 
 	do {
+		getcwd(dir, 256);
+		printf("%s > ", dir);
+
 		read_str(str, com);
 		save_cmd_in_history(com);
 		for (i = 0; i < 4; i++) {
@@ -89,34 +99,39 @@ int main(int argc, char *argv[]) {
 		if (i == 4) {
 			cmd_exec(str, com);
 		}
+		
+		
 	} while (strcmp(com, typecom[3]) != 0);
 
-	/* exit */
+	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
+
 }
 
-void change_driver(struct termios* savetty,struct termios* tty) {
-	if ( !isatty(0) ) { /*Check if stdin is terminal ?*/
-		fprintf (stderr, "stdin not terminal\n");
-		exit (1); /* stdin is file or smth. */
- 	};
+void set_driver() {
+	tcgetattr( STDIN_FILENO, &old_tty);
+	new_tty = old_tty;
+	new_tty.c_lflag &= ~(ICANON|ECHO);
+	tcsetattr( STDIN_FILENO, TCSANOW, &new_tty);
 
-	tcgetattr(0, tty);
-	savetty = tty; /* Save canonical mode info */
-	tty->c_lflag &= ~(ICANON|ECHO|ISIG);
-	tty->c_cc[VMIN] = 1;
-	tcsetattr(0, TCSAFLUSH, tty);
 }
 
+void reset_driver() {
+	tcsetattr( STDIN_FILENO, TCSANOW, &old_tty);
+}
 //funct	
 void read_str(char* _str, char* _com) {
 
 	int i = 0;
 
+	//echo on
+	
+	
 	do {
-		read(0, &_str[i],1);
+		_str[i] = getchar();
+		putchar(_str[i]);
 		i++;
 	} while ((int)_str[i - 1] != 10);
 	_str[i - 1] = NULL;
@@ -132,7 +147,15 @@ void read_str(char* _str, char* _com) {
 	puts(_str);
 }
 
-void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
+void cmd_cd(char* _str, char* _com) 
+{ 
+	int i = chdir(_str+3);
+	printf("\n[%s]\n",_str+3);
+	if (i != 0) {
+		printf("\nnot moved\n");
+	}
+};
+
 void cmd_history(char* _str, char* _com)
 {
 	char str[50];
