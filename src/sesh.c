@@ -195,29 +195,23 @@ void cmd_exec(char* _str, char* _com)
 	char* args[maxargs];
 	char com[82]="./";
 	strcat(com,_com);
+	
 	p=fork();
 	wait();
 	if (p==0){
-		int argno=0;
-		args[0]=" ";
-		char* str,nsp;
+		char* str;
+		int i=0;
 		strcpy(str,_str);
-		for (argno;argno<10;argno++){
-			args[argno]=" ";
-			argno++;
-			if (str=strchr(&str," ")==0){
-				if (argno==1) printf("no args sooca\n");
-				args[argno]=(char*)0;
-				break;
-			}
-			else {
-				nsp=strchr(str++," ");
-				strncpy(args[argno],&str,strlen(str)-strlen(nsp));
-			}
+		char* pch;
+		pch=strtok(str," ");
+		while (pch!=NULL){
+			args[i++]=pch;
+			pch=strtok(NULL," ");
 		}
+		args[i]=(char*)0;
 		if (execv(com,args)==-1){
-		printf("No such file: ");
-		puts(com);
+			printf("No such file: ");
+			puts(com);
 		}
 		exit(-1);
 	}
