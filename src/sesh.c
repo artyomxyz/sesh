@@ -115,7 +115,7 @@ void read_str(char* _str, char* _com) {
 	
 	
 	do {
-		read(0, &_str[i],1);
+		_str[i] = getchar();
 		putchar(_str[i]);
 		i++;
 	} while ((int)_str[i - 1] != 10);
