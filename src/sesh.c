@@ -17,6 +17,7 @@ void change_driver(struct termios* savetty,struct termios* tty);
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
 void cmd_his(char* _str, char* _com);
+void in_his(char* _com);
 void cmd_help(char* _str, char* _com);
 void cmd_exec(char* _str, char* _com);
 
@@ -76,6 +77,7 @@ int main(int argc, char *argv[]) {
 		read_str(str, com);
 		for (i = 0; i < 4; i++) {
 			if (strcmp(com, typecom[i]) == 0) {
+				in_his(com);
 				arr_func[i](str, com);
 				break;
 			}
@@ -128,6 +130,36 @@ void read_str(char* _str, char* _com) {
 }
 
 void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
-void cmd_his(char* _str, char* _com) { printf("This is hystory\n"); };
+void cmd_his(char* _str, char* _com)
+{
+	char str[50];
+	FILE *pfile;
+	pfile=fopen(".sesh_history","r");
+	if (pfile==NULL)
+	{
+		puts("Problems!\nNo such file!\n");
+	}
+	else
+	{
+		printf("This is history:\n");
+		while (fgets(str,50,pfile)!=NULL)
+ 		{
+			printf("%s",str);
+		}
+	}
+	fclose(pfile);
+}
+void in_his(char* _com)
+{
+	FILE *pfile;
+	pfile=fopen(".sesh_history","a");
+	if (pfile==NULL)
+	{
+		puts("Problems!\n");
+	}
+	fputs(_com,pfile);
+	fputs("\n",pfile);
+	fclose(pfile);
+}
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
 void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
