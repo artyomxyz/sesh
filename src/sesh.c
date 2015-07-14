@@ -5,7 +5,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdarg.h>
+#define maxargs 255
 #define STDIN_FILENO 0
+
 
 /* Declaration of tty control structures */
 struct termios old_tty, new_tty;
@@ -141,7 +144,7 @@ void read_str(char* _str, char* _com) {
 		i++;
 	}
 	_com[i] = NULL;
-	puts(_com);
+	puts(_str);
 }
 
 void cmd_cd(char* _str, char* _com) 
@@ -185,4 +188,31 @@ void save_cmd_in_history(char* _com)
 	fclose(pfile);
 }
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
-void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
+void cmd_exec(char* _str, char* _com)
+{ 
+	pid_t p;
+	p=0;
+	char* args[maxargs];
+	char com[82]="./";
+	strcat(com,_com);
+	
+	p=fork();
+	wait();
+	if (p==0){
+		char* str;
+		int i=0;
+		strcpy(str,_str);
+		char* pch;
+		pch=strtok(str," ");
+		while (pch!=NULL){
+			args[i++]=pch;
+			pch=strtok(NULL," ");
+		}
+		args[i]=(char*)0;
+		if (execv(com,args)==-1){
+			printf("No such file: ");
+			puts(com);
+		}
+		exit(-1);
+	}
+};
