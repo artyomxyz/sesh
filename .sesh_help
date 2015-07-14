@@ -1,5 +1,0 @@
-HELP     shows information about all available commands
-HISTORY  shows history of  inputted commands
-CD       changes directory
-EXIT     exits the programm
-FILENAME opens file with name "filename" in current directory
