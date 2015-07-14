@@ -11,7 +11,7 @@ dirs:
 
 ../bin/sesh: $(OBJ_FILES) ../obj/argtable3.o
 	@echo Linking sesh...
-	@gcc $< ../obj/argtable3.o -o $@ 
+	@gcc $(OBJ_FILES) ../obj/argtable3.o -o $@ 
 
 $(OBJ_FILES): ../obj/%.o: %.c
 	@echo Compiling $<...
