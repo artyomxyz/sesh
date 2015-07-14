@@ -1,5 +1,6 @@
 SRC_FILES = $(wildcard *.c)
 OBJ_FILES = $(SRC_FILES:%.c=../obj/%.o)
+INSTALL_PATH?=/usr
 
 INC=-I./
 
@@ -21,6 +22,11 @@ clean:
 	@echo Cleaning...
 	@rm -rf ../obj
 	@rm -rf ../bin
+
+install: all
+	cp ../bin/sesh $(INSTALL_PATH)/bin
+	mkdir -p $(INSTALL_PATH)/share/sesh
+	cp share/HELP $(INSTALL_PATH)/share/sesh
 
 # argtable
 
