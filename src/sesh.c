@@ -166,7 +166,7 @@ void cmd_help(char* _str, char* _com)
 {
 	char str[50];
 	FILE *pfile;
-	pfile=fopen(".sesh_help","r");
+	pfile=fopen("/usr/share/sesh/HELP","r");
 	if (pfile==NULL)
 		puts("Sorry, help is unavailable now.\n");
 	else
