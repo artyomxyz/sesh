@@ -4,6 +4,7 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 /* Declaration of tty control structures */
 struct termios _savetty;
@@ -12,12 +13,7 @@ struct termios _tty;
 struct arg_lit *help, *version;
 struct arg_end *end;
 
-
-struct shell_state
-{
-	char* pwd;
-};
-struct shell_state cur_dir;
+char* dir[256];
 
 //protipes
 void change_driver(struct termios* savetty,struct termios* tty);
@@ -80,12 +76,16 @@ int main(int argc, char *argv[]) {
 
 
 	int i = 0;
-	char com[80], str[80];
-	char dir[80] = "c:/mycode"; /* start */
-	cur_dir.pwd = dir;
+	char com[80], str[80];	
 
+	getcwd(dir, 256);
+	printf("directory: ");
+	puts(dir);	
+	
 
 	do {
+		printf("%s > ", dir);
+
 		read_str(str, com);
 		save_cmd_in_history(com);
 		for (i = 0; i < 4; i++) {
@@ -98,12 +98,15 @@ int main(int argc, char *argv[]) {
 		if (i == 4) {
 			cmd_exec(str, com);
 		}
+		
+		
 	} while (strcmp(com, typecom[3]) != 0);
 
-	/* exit */
+	
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
+
 }
 
 void change_driver(struct termios* savetty,struct termios* tty) {
@@ -143,41 +146,9 @@ void read_str(char* _str, char* _com) {
 
 void cmd_cd(char* _str, char* _com) 
 { 
-	printf("This is cd\n"); 
-	cmd_cd_dir(_str, &cur_dir); 
-};
-
-void cmd_cd_dir(char* _str, struct shell_state * dir)
-{
-	int i = 0;
-	while (dir->pwd[i] != NULL)
-		i++;
-
-	if ((_str[3] == '.') && (_str[4] == '.') && (_str[5] == NULL))
-	{
-		while (((int)dir->pwd[i] != 47) && (i != 1))
-			i--;
-		if (i != 1)
-			dir->pwd[i] = NULL;
-		else
-			printf("return impossible\n");
-	}
-	else
-	{
-		/* existence check */
-
-		dir->pwd[i] = (char)47;
-		i++;
-		int j = 3;
-		while (_str[j] != NULL)
-		{
-			dir->pwd[i] = _str[j];
-			i++;
-			j++;
-		}
-		dir->pwd[i] = NULL;
-	}
-	puts(dir->pwd);
+	int i = chdir(_str+3);
+	if (i == chdir(_str+3))
+		printf("\nnot moved\n");
 };
 
 void cmd_history(char* _str, char* _com)
