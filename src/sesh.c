@@ -66,7 +66,6 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
 void cmd_exec(char* _str, char* _com) { 
 	pid_t p;
 	p=0;
@@ -94,4 +93,4 @@ void cmd_exec(char* _str, char* _com) {
 		}
 		exit(-1);
 	}
-};
+}
