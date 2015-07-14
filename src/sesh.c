@@ -12,10 +12,18 @@ struct termios _tty;
 struct arg_lit *help, *version;
 struct arg_end *end;
 
+
+struct shell_state
+{
+	char* pwd;
+};
+struct shell_state cur_dir;
+
 //protipes
 void change_driver(struct termios* savetty,struct termios* tty);
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
+void cmd_cd_dir(char* _str, struct shell_state * dir);
 void cmd_history(char* _str, char* _com);
 void save_cmd_in_history(char* _com);
 void cmd_help(char* _str, char* _com);
@@ -69,8 +77,12 @@ int main(int argc, char *argv[]) {
 	char typecom[][8] = { "cd", "history", "help", "exit" };
 	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_history, cmd_help};
 
+
+
 	int i = 0;
 	char com[80], str[80];
+	char dir[80] = "c:/mycode"; /* start */
+	cur_dir.pwd = dir;
 
 
 	do {
@@ -129,7 +141,45 @@ void read_str(char* _str, char* _com) {
 	puts(_com);
 }
 
-void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
+void cmd_cd(char* _str, char* _com) 
+{ 
+	printf("This is cd\n"); 
+	cmd_cd_dir(_str, &cur_dir); 
+};
+
+void cmd_cd_dir(char* _str, struct shell_state * dir)
+{
+	int i = 0;
+	while (dir->pwd[i] != NULL)
+		i++;
+
+	if ((_str[3] == '.') && (_str[4] == '.') && (_str[5] == NULL))
+	{
+		while (((int)dir->pwd[i] != 47) && (i != 1))
+			i--;
+		if (i != 1)
+			dir->pwd[i] = NULL;
+		else
+			printf("return impossible\n");
+	}
+	else
+	{
+		/* existence check */
+
+		dir->pwd[i] = (char)47;
+		i++;
+		int j = 3;
+		while (_str[j] != NULL)
+		{
+			dir->pwd[i] = _str[j];
+			i++;
+			j++;
+		}
+		dir->pwd[i] = NULL;
+	}
+	puts(dir->pwd);
+};
+
 void cmd_history(char* _str, char* _com)
 {
 	char str[50];
