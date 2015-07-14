@@ -69,10 +69,7 @@ int main(int argc, char *argv[]) {
 void cmd_exec(char* _str, char* _com) { 
 	pid_t p;
 	p=0;
-	char* args[maxargs];
-	char com[82]="./";
-	strcat(com,_com);
-	
+	char* args[maxargs];	
 	p=fork();
 	int* status;
 	wait(status);
@@ -87,9 +84,9 @@ void cmd_exec(char* _str, char* _com) {
 			pch=strtok(NULL," ");
 		}
 		args[i]=(char*)0;
-		if (execv(com,args)==-1){
+		if (execvp(_com,args)==-1){
 			printf("No such file: ");
-			puts(com);
+			puts(_com);
 		}
 		exit(-1);
 	}
