@@ -5,10 +5,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+#define STDIN_FILENO 0
 
 /* Declaration of tty control structures */
-struct termios _savetty;
-struct termios _tty;
+struct termios old_tty, new_tty;
 /* Variables with information about cli arguments */
 struct arg_lit *help, *version;
 struct arg_end *end;
@@ -16,7 +16,8 @@ struct arg_end *end;
 char* dir[256];
 
 //protipes
-void change_driver(struct termios* savetty,struct termios* tty);
+void set_driver();
+void reset_driver();
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
 void cmd_cd_dir(char* _str, struct shell_state * dir);
@@ -67,7 +68,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
-	change_driver(&_savetty, &_tty);
+	set_driver();
 	
 //main lex
 	char typecom[][8] = { "cd", "history", "help", "exit" };
@@ -109,26 +110,28 @@ int main(int argc, char *argv[]) {
 
 }
 
-void change_driver(struct termios* savetty,struct termios* tty) {
-	if ( !isatty(0) ) { /*Check if stdin is terminal ?*/
-		fprintf (stderr, "stdin not terminal\n");
-		exit (1); /* stdin is file or smth. */
- 	};
+void set_driver() {
+	tcgetattr( STDIN_FILENO, &old_tty);
+	new_tty = old_tty;
+	new_tty.c_lflag &= ~(ICANON|ECHO);
+	tcsetattr( STDIN_FILENO, TCSANOW, &new_tty);
 
-	tcgetattr(0, tty);
-	savetty = tty; /* Save canonical mode info */
-	tty->c_lflag &= ~(ICANON|ECHO|ISIG);
-	tty->c_cc[VMIN] = 1;
-	tcsetattr(0, TCSAFLUSH, tty);
 }
 
+void reset_driver() {
+	tcsetattr( STDIN_FILENO, TCSANOW, &old_tty);
+}
 //funct	
 void read_str(char* _str, char* _com) {
 
 	int i = 0;
 
+	//echo on
+	
+	
 	do {
-		read(0, &_str[i],1);
+		_str[i] = getchar();
+		putchar(_str[i]);
 		i++;
 	} while ((int)_str[i - 1] != 10);
 	_str[i - 1] = NULL;
