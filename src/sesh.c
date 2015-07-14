@@ -16,7 +16,8 @@ struct arg_end *end;
 void change_driver(struct termios* savetty,struct termios* tty);
 void read_str(char* _str, char* _com);
 void cmd_cd(char* _str, char* _com);
-void cmd_his(char* _str, char* _com);
+void cmd_history(char* _str, char* _com);
+void save_cmd_in_history(char* _com);
 void cmd_help(char* _str, char* _com);
 void cmd_exec(char* _str, char* _com);
 
@@ -66,7 +67,7 @@ int main(int argc, char *argv[]) {
 	
 //main lex
 	char typecom[][8] = { "cd", "history", "help", "exit" };
-	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_his, cmd_help};
+	void(*arr_func[])(char*, char*) = { cmd_cd, cmd_history, cmd_help};
 
 	int i = 0;
 	char com[80], str[80];
@@ -74,6 +75,7 @@ int main(int argc, char *argv[]) {
 
 	do {
 		read_str(str, com);
+		save_cmd_in_history(com);
 		for (i = 0; i < 4; i++) {
 			if (strcmp(com, typecom[i]) == 0) {
 				arr_func[i](str, com);
@@ -128,6 +130,36 @@ void read_str(char* _str, char* _com) {
 }
 
 void cmd_cd(char* _str, char* _com) { printf("This is cd\n"); };
-void cmd_his(char* _str, char* _com) { printf("This is hystory\n"); };
+void cmd_history(char* _str, char* _com)
+{
+	char str[50];
+	FILE *pfile;
+	pfile=fopen(".sesh_history","r");
+	if (pfile==NULL)
+	{
+		puts("History is empty.\n");
+	}
+	else
+	{
+		printf("This is history:\n");
+		while (fgets(str,50,pfile)!=NULL)
+ 		{
+			printf("%s",str);
+		}
+	}
+	fclose(pfile);
+}
+void save_cmd_in_history(char* _com)
+{
+	FILE *pfile;
+	pfile=fopen(".sesh_history","a");
+	if (pfile==NULL)
+	{
+		puts("Problems!\n");
+	}
+	fputs(_com,pfile);
+	fputs("\n",pfile);
+	fclose(pfile);
+}
 void cmd_help(char* _str, char* _com) { printf("This is help\n"); };
 void cmd_exec(char* _str, char* _com) { printf("This is exec\n"); };
