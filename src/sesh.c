@@ -20,7 +20,7 @@ struct arg_end *end;
 int main(int argc, char *argv[]) {
 	/* Name of the programme */
 	char progname[] = "sesh";
-	char progversion[] = "0.0.0";
+	char progversion[] = "0.1.0";
 
 	/* Arguments table */
 	void *argtable[] = {
