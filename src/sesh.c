@@ -77,14 +77,11 @@ int main(int argc, char *argv[]) {
 
 
 	int i = 0;
-	char com[80], str[80];	
-
-	getcwd(dir, 256);
-	printf("directory: ");
-	puts(dir);	
+	char com[80], str[80];
 	
 
 	do {
+		getcwd(dir, 256);
 		printf("%s > ", dir);
 
 		read_str(str, com);
@@ -150,8 +147,10 @@ void read_str(char* _str, char* _com) {
 void cmd_cd(char* _str, char* _com) 
 { 
 	int i = chdir(_str+3);
-	if (i == chdir(_str+3))
+	printf("\n[%s]\n",_str+3);
+	if (i != 0) {
 		printf("\nnot moved\n");
+	}
 };
 
 void cmd_history(char* _str, char* _com)
