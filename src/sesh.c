@@ -20,7 +20,7 @@ struct arg_end *end;
 int main(int argc, char *argv[]) {
 	/* Name of the programme */
 	char progname[] = "sesh";
-	char progversion[] = "0.0.0";
+	char progversion[] = "0.1.0";
 
 	/* Arguments table */
 	void *argtable[] = {
@@ -66,27 +66,26 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void cmd_exec(char* _str, char* _com) { 
+void cmd_exec(int argc, char** argv) { 
 	pid_t p;
-	p=0;
-	char* args[maxargs];	
+	p=0;	
 	p=fork();
 	int* status;
 	wait(status);
 	if (p==0){
-		char* str;
+/*		char* str;
 		int i=0;
-		strcpy(str,_str);
+		str=_str;
 		char* pch;
 		pch=strtok(str," ");
 		while (pch!=NULL){
-			args[i++]=pch;
+			argv[i++]=pch;
 			pch=strtok(NULL," ");
 		}
-		args[i]=(char*)0;
-		if (execvp(_com,args)==-1){
+*/
+		if (execvp(argv[0],argv)==-1){
 			printf("No such file: ");
-			puts(_com);
+			puts(argv[0]);
 		}
 		exit(-1);
 	}
