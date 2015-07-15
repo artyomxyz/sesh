@@ -1,4 +1,4 @@
-#include "inc/dir_ls.h"
+#include "inc/dir.h"
 
 #include <unistd.h>
 #include <stdio.h>

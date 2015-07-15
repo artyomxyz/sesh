@@ -2,7 +2,7 @@
 #include "inc/term.h"
 #include "inc/history.h"
 #include "inc/help.h"
-#include "inc/dir_ls.h"
+#include "inc/dir.h"
 #include "inc/exec.h"
 
 #include <stdio.h>
