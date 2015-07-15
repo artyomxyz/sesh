@@ -4,7 +4,6 @@
 #include "inc/help.h"
 #include "inc/dir.h"
 #include "inc/exec.h"
-#include "inc/ls.h"
 
 #include <stdio.h>
 #include <unistd.h>
