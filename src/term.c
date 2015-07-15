@@ -18,23 +18,25 @@ void term_reset_driver() {
 	tcsetattr( STDIN_FILENO, TCSANOW, &old_tty);
 }
 
-void term_read_line(char* _str, char* _com) {
-
-	int i = 0;	
+void term_read_line(int _argc, char** _argv) {
+	char buff[1024];
+	int argc=_argc;
+	char* argv[255];
+	int i = 0;
+	int len=0;
+	char ch;
+	argv[0]=&buff[0];
 	
 	do {
-		_str[i] = getchar();
-		putchar(_str[i]);
-		i++;
-	} while ((int)_str[i - 1] != 10);
-	_str[i - 1] = NULL;
-
-
-	i = 0;
-	while ((_str[i] != ' ') && ((int)_str[i] != NULL))
-	{
-		_com[i] = _str[i];
-		i++;
-	}
-	_com[i] = NULL;
+		ch = getchar();
+		putchar(ch);
+		if (ch==' '){
+			buff[len]='\0';
+			i++;
+			argv[i]=&buff[len+1];
+		}
+		else {buff[len]=ch;}
+		len++;
+	} while (ch!='\n');
+	argv[i+1] = (char*)0;
 }
