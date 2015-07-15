@@ -66,27 +66,27 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void cmd_exec(char* _str, char* _com) { 
+void cmd_exec(int _argc, char** _argv) {
 	pid_t p;
 	p=0;
-	char* args[maxargs];	
 	p=fork();
 	int* status;
 	wait(status);
 	if (p==0){
-		char* str;
+/*		char* str;
 		int i=0;
 		str=_str;
 		char* pch;
 		pch=strtok(str," ");
 		while (pch!=NULL){
-			args[i++]=pch;
+			argv[i++]=pch;
 			pch=strtok(NULL," ");
 		}
-		args[i]=(char*)0;
-		if (execvp(_com,args)==-1){
+*/
+		puts("don't try to start files, tema pidor");
+		if (execvp(_argv[0],_argv)==-1){
 			printf("No such file: ");
-			puts(_com);
+			puts(_argv[0]);
 		}
 		exit(-1);
 	}
