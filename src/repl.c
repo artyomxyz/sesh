@@ -2,7 +2,7 @@
 #include "inc/term.h"
 #include "inc/history.h"
 #include "inc/help.h"
-#include "inc/cmd_cd.h"
+#include "inc/dir.h"
 #include "inc/exec.h"
 #include "inc/ls.h"
 
@@ -11,31 +11,60 @@
 #include <string.h>
 
 void repl () {
-	char typecom[][8] = { "cd", "history", "help", "ls", "exit" };
-	void(*arr_func[])(char*, char*) = { cmd_cd, history_cmd, cmd_help, ls_cmd };
-
-	int i = 0;
-	char com[80], str[80];
+	char typecom[][8] = { "cd", "history", "help", "ls" };
+	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
 	
-	char dir[256];
-	do {
-		getcwd(dir, 256);
-		printf("%s > ", dir);
+	while (1) {
+		// Prompt
+		char cwd[256];
+		getcwd(cwd, 256);
+		printf("%s > ", cwd);
+		
+		
+		// Read
+		char buff[1024];
+		char *cur = buff;
+		char c;
 
-		term_read_line(str, com);
-		history_save_cmd(str);
+		while ( (c=getchar()) != '\n' ) {
+			putchar(c);
+			*(cur++) = c;
+		}
+		*cur = '\0';
+		putchar('\n');
 
-		for (i = 0; i < 5; i++) {
-			if (strcmp(com, typecom[i]) == 0) {
-				arr_func[i](str, com);
+		// Save entry in history
+		history_save_cmd(buff);
+
+		// Parse
+
+		int argc = 0;
+		char* argv[256];
+
+
+		char* pch = strtok(buff, " ");
+  		while (pch != NULL) {
+  			argv[argc++] = pch;
+  			pch = strtok(NULL, " ");
+  		}
+  		argv[argc] = NULL;
+
+		// Route
+		if (strcmp(argv[0], "exit") == 0) {
+			break;
+		}
+
+		int j;
+		for (j = 0; j < 4; j++) {
+			if (strcmp(argv[0], typecom[j]) == 0) {
+				arr_func[j](argc, argv);
 				break;
 			}
 		}
 
-		if (i == 5) {
-			cmd_exec(str, com);
+		if (j == 4) {
+			exec_cmd(argc, argv);
 		}
-		
-		
-	} while (strcmp(com, typecom[3]) != 0);
+		// Loop		
+	}
 }

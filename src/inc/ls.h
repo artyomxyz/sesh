@@ -1,3 +1,3 @@
 #pragma once
 
-void ls_cmd(char* _str, char* _com);
+void ls_cmd(int argc, char** argv);

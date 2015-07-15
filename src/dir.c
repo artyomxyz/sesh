@@ -1,10 +1,10 @@
-#include "inc/cmd_cd.h"
+#include "inc/dir.h"
 
 #include <unistd.h>
 #include <stdio.h>
 
-void cmd_cd(char* _str, char* _com) { 
-	int i = chdir(_str+3);
+void dir_cmd(int argc, char** argv) {
+	int i = chdir(argv[1]);
 	if (i != 0) {
 		puts("\nUnable to change directory");
 	}

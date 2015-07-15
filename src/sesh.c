@@ -4,10 +4,6 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 #define maxargs 255
 
 #include "inc/term.h"
@@ -20,7 +16,7 @@ struct arg_end *end;
 int main(int argc, char *argv[]) {
 	/* Name of the programme */
 	char progname[] = "sesh";
-	char progversion[] = "0.0.0";
+	char progversion[] = "0.1.0";
 
 	/* Arguments table */
 	void *argtable[] = {
@@ -64,33 +60,4 @@ int main(int argc, char *argv[]) {
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
-}
-
-void cmd_exec(char* _str, char* _com) { 
-	pid_t p;
-	p=0;
-	char* args[maxargs];
-	char com[82]="./";
-	strcat(com,_com);
-	
-	p=fork();
-	int* status;
-	wait(status);
-	if (p==0){
-		char* str;
-		int i=0;
-		strcpy(str,_str);
-		char* pch;
-		pch=strtok(str," ");
-		while (pch!=NULL){
-			args[i++]=pch;
-			pch=strtok(NULL," ");
-		}
-		args[i]=(char*)0;
-		if (execv(com,args)==-1){
-			printf("No such file: ");
-			puts(com);
-		}
-		exit(-1);
-	}
 }

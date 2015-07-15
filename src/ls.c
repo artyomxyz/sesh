@@ -6,7 +6,7 @@
 #include <dirent.h>
 #include <unistd.h>
 
-void ls_cmd(char* _str, char* _com)//(int argc, char** argv) 
+void ls_cmd(int argc, char** argv) 
 {
 	struct dirent *entry;
 	char name_dir[256];

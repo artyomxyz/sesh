@@ -1,3 +1,3 @@
 #pragma once
 
-void cmd_exec(char* _str, char* _com);
+void exec_cmd(int argc, char** argv);
