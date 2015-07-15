@@ -2,7 +2,7 @@
 #include "inc/term.h"
 #include "inc/history.h"
 #include "inc/help.h"
-#include "inc/cmd_cd.h"
+#include "inc/dir.h"
 #include "inc/exec.h"
 
 #include <stdio.h>
@@ -11,7 +11,7 @@
 
 void repl () {
 	char typecom[][8] = { "cd", "history", "help", "exit" };
-	void(*arr_func[])(int, char**) = { cmd_cd, history_cmd, cmd_help};
+	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd};
 	
 	char* argv[255];
 	char dir[256];

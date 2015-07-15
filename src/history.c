@@ -4,7 +4,7 @@
 
 void history_cmd(int argc, char** argv)
 {
-/*	char str[50];
+	char str[50];
 	FILE *pfile;
 	pfile=fopen(".sesh_history","r");
 	if (pfile==NULL)
@@ -32,5 +32,4 @@ void history_save_cmd(char* _com)
 	fputs(_com,pfile);
 	fputs("\n",pfile);
 	fclose(pfile);
-	*/
 }

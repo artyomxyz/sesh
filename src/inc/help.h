@@ -1,3 +1,3 @@
 #pragma once
 
-void cmd_help(int argc, char** argv);
+void help_cmd(int argc, char** argv);
