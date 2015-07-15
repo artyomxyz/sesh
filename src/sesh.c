@@ -66,26 +66,27 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void cmd_exec(int argc, char** argv) { 
+void cmd_exec(char* _str, char* _com) { 
 	pid_t p;
-	p=0;	
+	p=0;
+	char* args[maxargs];	
 	p=fork();
 	int* status;
 	wait(status);
 	if (p==0){
-/*		char* str;
+		char* str;
 		int i=0;
 		str=_str;
 		char* pch;
 		pch=strtok(str," ");
 		while (pch!=NULL){
-			argv[i++]=pch;
+			args[i++]=pch;
 			pch=strtok(NULL," ");
 		}
-*/
-		if (execvp(argv[0],argv)==-1){
+		args[i]=(char*)0;
+		if (execvp(_com,args)==-1){
 			printf("No such file: ");
-			puts(argv[0]);
+			puts(_com);
 		}
 		exit(-1);
 	}
