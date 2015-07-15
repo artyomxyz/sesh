@@ -76,7 +76,7 @@ void cmd_exec(char* _str, char* _com) {
 	if (p==0){
 		char* str;
 		int i=0;
-		strcpy(str,_str);
+		str=_str;
 		char* pch;
 		pch=strtok(str," ");
 		while (pch!=NULL){
