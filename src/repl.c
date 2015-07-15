@@ -4,14 +4,15 @@
 #include "inc/help.h"
 #include "inc/dir.h"
 #include "inc/exec.h"
+#include "inc/ls.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 
 void repl () {
-	char typecom[][8] = { "cd", "history", "help" };
-	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd};
+	char typecom[][8] = { "cd", "history", "help", "ls" };
+	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
 	
 	while (1) {
 		// Prompt
@@ -54,14 +55,14 @@ void repl () {
 		}
 
 		int j;
-		for (j = 0; j < 3; j++) {
+		for (j = 0; j < 4; j++) {
 			if (strcmp(argv[0], typecom[j]) == 0) {
 				arr_func[j](argc, argv);
 				break;
 			}
 		}
 
-		if (j == 3) {
+		if (j == 4) {
 			exec_cmd(argc, argv);
 		}
 		// Loop		
