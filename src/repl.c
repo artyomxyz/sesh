@@ -10,56 +10,60 @@
 #include <string.h>
 
 void repl () {
-	char typecom[][8] = { "cd", "history", "help", "exit" };
+	char typecom[][8] = { "cd", "history", "help" };
 	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd};
 	
-	char* argv[255];
-	char dir[256];
-	char buff[1024];
-	int i = 0;
-	int j = 0;
-	int argc=1;
-	int len=0;
-	char ch;
-	
-	do {
-		getcwd(dir, 256);
-		printf("%s > ", dir);
+	while (1) {
+		// Prompt
+		char cwd[256];
+		getcwd(cwd, 256);
+		printf("%s > ", cwd);
 		
-		argc=1;	
-		i = 0;
-		len=0;
-		argv[0]=&buff[0];
-	
-		do {
-			ch = getchar();
-			putchar(ch);
-			if (ch=='\n') break;
-			if (ch==' '){
-				buff[len]='\0';
-				i++;
-				argv[i]=&buff[len+1];
-				argc++;
-			}
-			else {buff[len]=ch;}
-			len++;
-		} while (0==0);
-		argv[i+1] = (char*)0;
-		buff[len]='\0';
 		
-		//history_save_cmd(str);
-		for (j = 0; j < 4; j++) {
+		// Read
+		char buff[1024];
+		char *cur = buff;
+		char c;
+
+		while ( (c=getchar()) != '\n' ) {
+			putchar(c);
+			*(cur++) = c;
+		}
+		*cur = '\0';
+		putchar('\n');
+
+		// Save entry in history
+		history_save_cmd(buff);
+
+		// Parse
+
+		int argc = 0;
+		char* argv[256];
+
+
+		char* pch = strtok(buff, " ");
+  		while (pch != NULL) {
+  			argv[argc++] = pch;
+  			pch = strtok(NULL, " ");
+  		}
+  		argv[argc] = NULL;
+
+		// Route
+		if (strcmp(argv[0], "exit") == 0) {
+			break;
+		}
+
+		int j;
+		for (j = 0; j < 3; j++) {
 			if (strcmp(argv[0], typecom[j]) == 0) {
 				arr_func[j](argc, argv);
 				break;
 			}
 		}
 
-		if (j == 4) {
-			sleep(0.5);
-			cmd_exec(argc, argv);
+		if (j == 3) {
+			exec_cmd(argc, argv);
 		}
-		
-		
-	} while (strcmp(argv[0], typecom[3]) != 0) ;
+		// Loop		
+	}
 }

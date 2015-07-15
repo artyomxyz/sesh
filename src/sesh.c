@@ -4,10 +4,6 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 #define maxargs 255
 
 #include "inc/term.h"
