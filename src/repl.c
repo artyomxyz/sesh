@@ -59,5 +59,5 @@ void repl () {
 		}
 		
 		
-	} while (strcmp(argv[0], typecom[3]) != 0);
+	} while (strcmp(argv[0], typecom[3]) != 0) ;
 }

@@ -83,8 +83,7 @@ void cmd_exec(int _argc, char** _argv) {
 			pch=strtok(NULL," ");
 		}
 */
-		puts("don't try to start files, tema pidor");
-		if (execvp(_argv[0],_argv)==-1){
+		if (execv(_argv[0],_argv)==-1){
 			printf("No such file: ");
 			puts(_argv[0]);
 		}
