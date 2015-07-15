@@ -5,8 +5,17 @@
 void history_cmd(char* _str, char* _com)
 {
 	char str[50];
+					
+	const char * ghp(const char * ot)
+	{
+		static char buff[256];
+		strcpy(buff, getenv("HOME"));
+		strcat(buff, ot);
+		return buff;
+	}
+					
 	FILE *pfile;
-	pfile=fopen(".sesh_history","r");
+	pfile=fopen("ghp('.sesh_history')","r");
 	if (pfile==NULL)
 	{
 		puts("History is empty.\n");
@@ -24,7 +33,16 @@ void history_cmd(char* _str, char* _com)
 void history_save_cmd(char* _com)
 {
 	FILE *pfile;
-	pfile=fopen(".sesh_history","a");
+				
+	        const char * ghp(const char * ot)
+        {
+                static char buff[256];
+                strcpy(buff, getenv("HOME"));
+                strcat(buff, ot);
+                return buff;
+        }
+        			
+	pfile=fopen("ghp('.sesh_history')","a");
 	if (pfile==NULL)
 	{
 		puts("Problems!\n");
