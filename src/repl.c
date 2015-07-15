@@ -20,7 +20,8 @@ void repl () {
 	int j = 0;
 	int argc=1;
 	int len=0;
-	char ch;	
+	char ch;
+	
 	do {
 		getcwd(dir, 256);
 		printf("%s > ", dir);
@@ -55,6 +56,7 @@ void repl () {
 		}
 
 		if (j == 4) {
+			sleep(0.5);
 			cmd_exec(argc, argv);
 		}
 		

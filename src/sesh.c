@@ -73,17 +73,7 @@ void cmd_exec(int _argc, char** _argv) {
 	int* status;
 	wait(status);
 	if (p==0){
-/*		char* str;
-		int i=0;
-		str=_str;
-		char* pch;
-		pch=strtok(str," ");
-		while (pch!=NULL){
-			argv[i++]=pch;
-			pch=strtok(NULL," ");
-		}
-*/
-		if (execv(_argv[0],_argv)==-1){
+		if (execvp(_argv[0],_argv)==-1){
 			printf("No such file: ");
 			puts(_argv[0]);
 		}
