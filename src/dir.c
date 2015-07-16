@@ -31,7 +31,7 @@ void ls_cmd(int argc, char** argv) {
 	
     DIR *dir=opendir(name_dir);
    
-    if (!dir)
+	if (!dir)
         printf("There is no such directory : \"%s\".\n", argv[1]);
 	else{
 		while ( (entry = readdir(dir)) != NULL)
