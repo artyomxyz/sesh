@@ -145,8 +145,32 @@ Result: PASS.
 
 Test case 19.
 Description:
-Pressing <BACKSPACE> in sesh.
+Entering "cd /" command in sesh.
 
-Expected result: the programme should erase previous character in the entered command.
+Expected result: the programme should move to root directory and return to input.
 
 Result: PASS.
+
+Test case 20.
+Description:
+Entering "sesh" command in sesh.
+
+Expected result: the programme should run sesh being in sesh.
+
+Result: PASS.
+
+Test case 21.
+Description:
+Entering "git pull origin master" command in sesh.
+
+Expected result: the programme should run git with arguments "pull" "origin" and "master" being in sesh.
+
+Result: PASS.
+
+Test case 22.
+Description:
+Entering "git commit -m "finished testing"" command in sesh.
+
+Expected result: the programme should run git with arguments "commit" "-m" and ""finished testing"" being in sesh.
+
+Result: FAIL.
