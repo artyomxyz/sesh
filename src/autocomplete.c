@@ -46,8 +46,7 @@ char** autocomplete(int argc, char** argv) {
 			i++;
 		}
 		if (notPrefix == 0) {
-			Wcounter++;
-			autocomplete_array[Wcounter] = autocomplete_buff+Scounter;
+			autocomplete_array[Wcounter++] = autocomplete_buff+Scounter;
 			i = 0;
 			while(entry->d_name[i]!=0) {
 				autocomplete_buff[Scounter] = entry->d_name[i];
@@ -55,11 +54,12 @@ char** autocomplete(int argc, char** argv) {
 				Scounter++;
 				i++;
 			}
-			autocomplete_buff[Scounter] = NULL;
+			autocomplete_buff[Scounter] = '\0';
 			Scounter++;
 		}
  	} 
 	closedir(dir);
+	autocomplete_array[Wcounter] = NULL;
 
 	return autocomplete_array;
 }

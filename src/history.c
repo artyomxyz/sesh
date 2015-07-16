@@ -30,14 +30,16 @@ void history_init() {
 */
 
 void history_cmd(int argc, char** argv) {
-	char str[50];
+	int count=0;
+	char str[256];
 	if (history_fd==NULL) {
 		puts("History is empty.");
 	} else {
-		printf("This is history:");
+		printf("This is history:\n");
 		fseek(history_fd, 0, SEEK_SET);
-		while (fgets(str, 50, history_fd) != NULL) {
-			printf("%s",str);
+		while (fgets(str, 256, history_fd) != NULL) {
+			count++;
+			printf("%d %s",count, str);
 		}
 		puts("");
 	}
@@ -66,7 +68,7 @@ void history_save_cmd(char* cmd) {
 *	int i - number of required command
 *  Returnes: 
 *	his_entry - a pointer to the command
-*/	
+*/
 char* history_entry(int i)
 {
 	char* his_entry = NULL;
