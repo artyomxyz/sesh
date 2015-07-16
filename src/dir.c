@@ -20,9 +20,9 @@ void ls_cmd(int argc, char** argv) {
 	if (argc==1) {
 		getcwd(name_dir, 256);
 	} else {
-		if (argv[1][0]=='/')
+		if (argv[1][0]=='/') {
 			strcpy(name_dir, argv[1]);
-		else {
+		} else {
 			getcwd(name_dir, 256);
 			strcat(name_dir, "/");
 			strcat(name_dir, argv[1]);
