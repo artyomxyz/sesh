@@ -40,3 +40,23 @@ void history_save_cmd(char* cmd) {
 		fputs("\n", history_fd);
 	}
 }
+
+char* history_entry(int i)
+{
+	char* his_entry = NULL;
+	int count = 0;
+	char str[256];
+	if (history_fd == NULL) {
+		puts("Problems!");
+	} else {
+		while (fgets(str, 256, history_fd) != NULL) {
+			count++;
+			if (count == i) {
+				his_entry = str;
+				break;
+			}
+		}
+	}
+	fclose(history_fd);
+	return(his_entry);
+}
