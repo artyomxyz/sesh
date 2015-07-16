@@ -1,6 +1,14 @@
 #include "inc/help.h"
 
 #include <stdio.h>
+/* Description:
+*	It displays a brief description of the program.	
+*  Receives:
+*	int argc - The number of arguments of the interpreter.
+*	char** argv - A pointer to an array of strings consisting of these arguments. 
+*  Returnes: 
+*	void
+*/
 
 void help_cmd(int argc, char** argv) {
 	char str[50];

@@ -8,7 +8,14 @@
 
 char* autocomplete_array[256];
 char autocomplete_buff[8192];
-
+/* Description:
+* 	Search all the options autocomplete. Formation of a string array of options.
+*  Receives:
+*	int argc - The number of arguments of the interpreter.
+*	char** argv - A pointer to an array of strings consisting of these arguments.
+*  Returnes: 
+*	A pointer to an array of strings consisting of all possible options for autocompletion.
+*/
 char** autocomplete(int argc, char** argv) {
 	struct dirent *entry;
 	char name_dir[256];

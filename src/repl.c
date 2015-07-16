@@ -17,6 +17,16 @@
 #define KEY_SC_RIGHT 'C'
 #define KEY_SC_LEFT 'D'
 
+/* Description:
+*	REPL = Read, Evaluate, Print, Loop	
+*	It receives commands entered by the user and transmits them to the corresponding functions.  
+*  Receives:
+*	void
+*  Returnes: 
+*	void
+*/
+
+
 
 void repl () {
 	char typecom[][8] = { "cd", "history", "help", "ls" };

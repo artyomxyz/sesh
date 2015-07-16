@@ -7,6 +7,15 @@
 #include <dirent.h>
 #include <stdlib.h>
 
+/* Description:
+*	Moves user to the catalog, that he/she enters.	
+*  Receives:
+*	int argc - The number of arguments of the interpreter.
+*	char** argv - A pointer to an array of strings consisting of these arguments.	
+*  Returnes: 
+*	void	
+*/
+
 void dir_cmd(int argc, char** argv) {
 	char* dir;
 
@@ -21,6 +30,14 @@ void dir_cmd(int argc, char** argv) {
 		printf("\nUnable to change directory, error: %d\n", err);
 	}
 }
+/* Description:
+*	It prints the contents of the specified folder.	
+*  Receives:
+*	int argc - The number of arguments of the interpreter.
+*	char** argv - A pointer to an array of strings consisting of these arguments.	
+*  Returnes: 
+*	void
+*/
 
 void ls_cmd(int argc, char** argv) {
 	struct dirent *entry;
