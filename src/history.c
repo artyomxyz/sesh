@@ -23,9 +23,7 @@ void history_cmd(int argc, char** argv)
 	if (history_fd==NULL)
 	{
 		puts("History is empty.\n");
-	}
-	else
-	{
+	} else {
 		printf("This is history:\n");
 		while (fgets(str,50,history_fd)!=NULL)
 		{
