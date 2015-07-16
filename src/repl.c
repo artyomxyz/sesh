@@ -8,6 +8,14 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#define KEY_BACKSPACE 8
+#define KEY_DELETE 127
+#define KEY_ARROWS 27
+#define KEY_TAB 9
+#define KEY_SC_UP 'A'
+#define KEY_SC_DOWN 'B'
+#define KEY_SC_RIGHT 'C'
+#define KEY_SC_LEFT 'D'
 
 
 void repl () {
@@ -26,24 +34,44 @@ void repl () {
 		// Read
 		char buff[1024];
 		char *cur = buff;
-		char c;
+		char c[2];
 
 		while (read(STDIN_FILENO, &c, 1) != 0) {
-			if (c == '\n') {
+			if (c[0] == '\n') {
 				break;
 			}
-			switch(c) {
-				case 8: 
-				case 127:
-					write(STDIN_FILENO, "\b \b", 3);
+			switch(c[0]) {
+				case KEY_BACKSPACE: 
+				case KEY_DELETE:
+					write(STDOUT_FILENO, "\b \b", 3);
 					cur--;
 					break;
+				case KEY_ARROWS:
+					read(STDIN_FILENO, &c, 2);
+					if (c[0] == '['){
+						switch(c[1]){
+							case KEY_SC_UP:
+								write(STDOUT_FILENO, "up", 2);
+								break;
+							case KEY_SC_DOWN:
+								write(STDOUT_FILENO, "down", 4);
+								break;
+							case KEY_SC_RIGHT:
+								write(STDOUT_FILENO, "right", 5);
+								break;
+							case KEY_SC_LEFT:
+								write(STDOUT_FILENO, "left", 4);
+								break;
+						}
+					}
+					break;
+				case KEY_TAB:
+					write(STDOUT_FILENO, "	", 1);
+					break;
 					
-					
-				
 				default: 
 					write(STDOUT_FILENO, &c, 1);
-					*(cur++) = c;
+					*(cur++) = c[0];
 					break;
 			}
 		}
