@@ -17,9 +17,9 @@ void ls_cmd(int argc, char** argv) {
 	struct dirent *entry;
 	char name_dir[256];
 	
-	if (argc==1)
+	if (argc==1) {
 		getcwd(name_dir, 256);
-	else {
+	} else {
 		if (argv[1][0]=='/')
 			strcpy(name_dir, argv[1]);
 		else {
@@ -29,13 +29,14 @@ void ls_cmd(int argc, char** argv) {
 		}
 	}
 	
-    DIR *dir=opendir(name_dir);
-   
-	if (!dir)
-        printf("There is no such directory : \"%s\".\n", argv[1]);
-	else{
-		while ( (entry = readdir(dir)) != NULL)
+	DIR *dir=opendir(name_dir);
+	
+	if (!dir) {
+		printf("There is no such directory : \"%s\".\n", argv[1]);
+	} else {
+		while ( (entry = readdir(dir)) != NULL) {
 			printf("%s\n",entry->d_name);
-	}   
+		}
+	}
 	closedir(dir);
 }
