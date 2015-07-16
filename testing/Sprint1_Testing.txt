@@ -32,21 +32,13 @@ Result: PASS.
 
 Test case 5.
 Description:
-Launching the programme with "-v" parameter.
-
-Expected result: the programme should display current version of the programme and exit.
-
-Result: PASS.
-
-Test case 6.
-Description:
 Entering "help" command in sesh.
 
 Expected result: the programme should display helpfile and return to the input.
 
 Result: PASS.
 
-Test case 7.
+Test case 6.
 Description:
 Entering "history" command in sesh.
 
@@ -54,7 +46,7 @@ Expected result: the programme should display history file and return to the inp
 
 Result: Not completely done. The programme doesn't erase the history after exiting, so the user gets some outdated entries.
 
-Test case 8.
+Test case 7.
 Description:
 Entering "cd .." command in sesh.
 
@@ -62,7 +54,7 @@ Expected result: the programme should move to the upper directory and return to 
 
 Result: PASS.
 
-Test case 9.
+Test case 8.
 Description:
 Entering "cd ../.." command in sesh.
 
@@ -70,7 +62,7 @@ Expected result: the programme should move up for two directories and return to 
 
 Result: PASS.
 
-Test case 10.
+Test case 9.
 Description:
 Entering "echo fubar" command in sesh.
 
@@ -78,7 +70,7 @@ Expected result: the programme should launch "echo" file from PATH which display
 
 Result: PASS.
 
-Test case 11.
+Test case 10.
 Description:
 Entering "./hw -f" command in sesh being in "sesh/src".
 
@@ -86,7 +78,7 @@ Expected result: the programme should launch "hw" file with "-f" parameter from 
 
 Result: PASS.
 
-Test case 12.
+Test case 11.
 Description:
 Entering "exit" command in sesh.
 
