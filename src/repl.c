@@ -36,12 +36,16 @@ void repl () {
 			switch(c) {
 				case 8: 
 				case 127:
-					write(STDIN_FILENO, "\b \b", 3);
+					write(STDOUT_FILENO, "\b \b", 3);
 					cur--;
 					break;
+				case 65:
+					write(STDOUT_FILENO, "up", 2);
+					break;
+				case 66:
+					write(STDOUT_FILENO, "down", 4);
+					break;
 					
-					
-				
 				default: 
 					write(STDOUT_FILENO, &c, 1);
 					*(cur++) = c;
