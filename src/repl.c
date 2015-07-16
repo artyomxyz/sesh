@@ -27,28 +27,39 @@ void repl () {
 		// Read
 		char buff[1024];
 		char *cur = buff;
-		char c;
+		char c[2];
 
 		while (read(STDIN_FILENO, &c, 1) != 0) {
-			if (c == '\n') {
+			if (c[0] == '\n') {
 				break;
 			}
-			switch(c) {
+			switch(c[0]) {
 				case 8: 
 				case 127:
 					write(STDOUT_FILENO, "\b \b", 3);
 					cur--;
 					break;
-				case 65:
-					write(STDOUT_FILENO, "up", 2);
+				case 27:
+					read(STDIN_FILENO, &c, 2);
+					if (c[0] == '['){
+						if (c[1] == 'A'){
+							write(STDOUT_FILENO, "up", 2);
+						}else if (c[1] == 'B'){
+							write(STDOUT_FILENO, "down", 4);
+						}else if (c[1] == 'C'){
+							write(STDOUT_FILENO, "right", 5);
+						}else if (c[1] == 'D'){
+							write(STDOUT_FILENO, "left", 4);
+						}
+					}
 					break;
-				case 66:
-					write(STDOUT_FILENO, "down", 4);
+				case 9:
+					write(STDOUT_FILENO, "	", 1);
 					break;
 					
 				default: 
 					write(STDOUT_FILENO, &c, 1);
-					*(cur++) = c;
+					*(cur++) = c[0];
 					break;
 			}
 		}
