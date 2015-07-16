@@ -97,6 +97,8 @@ void repl () {
   		argv[argc] = NULL;
 
 		// Route
+  		if (argc == 0) continue;
+
 		if (strcmp(argv[0], "exit") == 0) {
 			break;
 		}
