@@ -59,6 +59,7 @@ int main(int argc, char *argv[]) {
 	history_init();
 	term_set_driver();
 	repl();	
+	term_reset_driver();
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
