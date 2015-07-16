@@ -15,14 +15,16 @@ void history_init() {
 }
 
 void history_cmd(int argc, char** argv) {
+	int count=0;
 	char str[50];
 	if (history_fd==NULL) {
 		puts("History is empty.");
 	} else {
-		printf("This is history:");
+		printf("This is history:\n");
 		fseek(history_fd, 0, SEEK_SET);
 		while (fgets(str, 50, history_fd) != NULL) {
-			printf("%s",str);
+			count++;
+			printf("%d %s",count, str);
 		}
 		puts("");
 	}
