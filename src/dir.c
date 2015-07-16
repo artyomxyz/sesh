@@ -5,11 +5,20 @@
 #include <string.h>
 #include <sys/types.h>
 #include <dirent.h>
+#include <stdlib.h>
 
 void dir_cmd(int argc, char** argv) {
-	int i = chdir(argv[1]);
-	if (i != 0) {
-		puts("\nUnable to change directory");
+	char* dir;
+
+	if (argc == 1) {
+		dir = getenv("HOME");
+	} else {
+		dir = argv[1];
+	}
+
+	int err = chdir(dir);
+	if (err != 0) {
+		printf("\nUnable to change directory, error: %d\n", err);
 	}
 }
 
@@ -20,7 +29,7 @@ void ls_cmd(int argc, char** argv) {
 	if (argc==1) {
 		getcwd(name_dir, 256);
 	} else {
-		if (argv[1][0]=='/') {
+		if (argv[1][0] == '/') {
 			strcpy(name_dir, argv[1]);
 		} else {
 			getcwd(name_dir, 256);

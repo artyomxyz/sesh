@@ -8,6 +8,7 @@
 
 #include "inc/term.h"
 #include "inc/repl.h"
+#include "inc/history.h"
 
 /* Variables with information about cli arguments */
 struct arg_lit *help, *version;
@@ -55,6 +56,7 @@ int main(int argc, char *argv[]) {
 		return 0;
 	}
 
+	history_init();
 	term_set_driver();
 	repl();	
 
