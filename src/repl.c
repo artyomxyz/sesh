@@ -13,6 +13,10 @@
 #define KEY_DELETE 127
 #define KEY_ARROWS 27
 #define KEY_TAB 9
+#define KEY_SC_UP 'A'
+#define KEY_SC_DOWN 'B'
+#define KEY_SC_RIGHT 'C'
+#define KEY_SC_LEFT 'D'
 
 
 void repl () {
@@ -46,14 +50,19 @@ void repl () {
 				case KEY_ARROWS:
 					read(STDIN_FILENO, &c, 2);
 					if (c[0] == '['){
-						if (c[1] == 'A'){
-							write(STDOUT_FILENO, "up", 2);
-						}else if (c[1] == 'B'){
-							write(STDOUT_FILENO, "down", 4);
-						}else if (c[1] == 'C'){
-							write(STDOUT_FILENO, "right", 5);
-						}else if (c[1] == 'D'){
-							write(STDOUT_FILENO, "left", 4);
+						switch(c[1]){
+							case KEY_SC_UP:
+								write(STDOUT_FILENO, "up", 2);
+								break;
+							case KEY_SC_DOWN:
+								write(STDOUT_FILENO, "down", 4);
+								break;
+							case KEY_SC_RIGHT:
+								write(STDOUT_FILENO, "right", 5);
+								break;
+							case KEY_SC_LEFT:
+								write(STDOUT_FILENO, "left", 4);
+								break;
 						}
 					}
 					break;
