@@ -2,39 +2,88 @@
 #include "inc/term.h"
 #include "inc/history.h"
 #include "inc/help.h"
-#include "inc/cmd_cd.h"
+#include "inc/dir.h"
 #include "inc/exec.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 
+
 void repl () {
-	char typecom[][8] = { "cd", "history", "help", "exit" };
-	void(*arr_func[])(char*, char*) = { cmd_cd, history_cmd, cmd_help};
-
-	int i = 0;
-	char com[80], str[80];
+	char typecom[][8] = { "cd", "history", "help", "ls" };
+	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
 	
-	char dir[256];
-	do {
-		getcwd(dir, 256);
-		printf("%s > ", dir);
+	while (1) {
+		// Prompt
+		char cwd[256];
+		getcwd(cwd, 256);
+		// printf("%s > ", cwd);
+		write(STDOUT_FILENO, cwd, strlen(cwd));
+		write(STDOUT_FILENO, " > ", 3);
+		
+		
+		// Read
+		char buff[1024];
+		char *cur = buff;
+		char c;
 
-		term_read_line(str, com);
-		history_save_cmd(str);
+		while (read(STDIN_FILENO, &c, 1) != 0) {
+			if (c == '\n') {
+				break;
+			}
+			switch(c) {
+				case 8: 
+				case 127:
+					write(STDIN_FILENO, "\b \b", 3);
+					cur--;
+					break;
+					
+					
+				
+				default: 
+					write(STDOUT_FILENO, &c, 1);
+					*(cur++) = c;
+					break;
+			}
+		}
+		*cur = '\0';
+		char eol = '\n';
+		write(STDOUT_FILENO, &eol, 1);
+		
 
-		for (i = 0; i < 4; i++) {
-			if (strcmp(com, typecom[i]) == 0) {
-				arr_func[i](str, com);
+		// Save entry in history
+		history_save_cmd(buff);
+
+		// Parse
+
+		int argc = 0;
+		char* argv[256];
+
+
+		char* pch = strtok(buff, " ");
+  		while (pch != NULL) {
+  			argv[argc++] = pch;
+  			pch = strtok(NULL, " ");
+  		}
+  		argv[argc] = NULL;
+
+		// Route
+		if (strcmp(argv[0], "exit") == 0) {
+			break;
+		}
+
+		int j;
+		for (j = 0; j < 4; j++) {
+			if (strcmp(argv[0], typecom[j]) == 0) {
+				arr_func[j](argc, argv);
 				break;
 			}
 		}
 
-		if (i == 4) {
-			cmd_exec(str, com);
+		if (j == 4) {
+			exec_cmd(argc, argv);
 		}
-		
-		
-	} while (strcmp(com, typecom[3]) != 0);
+		// Loop		
+	}
 }

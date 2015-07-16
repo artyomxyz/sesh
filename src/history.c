@@ -16,7 +16,7 @@ void history_init()
 	history_fd=fopen("ghp('.sesh_history')","a+");
 }
 
-void history_cmd(char* _str, char* _com)
+void history_cmd(int argc, char** argv)
 {
 	char str[50];
 	history_init();
@@ -34,6 +34,7 @@ void history_cmd(char* _str, char* _com)
 	}
 	fclose(history_fd);
 }
+
 void history_save_cmd(char* _com)
 {
 	history_init();

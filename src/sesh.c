@@ -4,10 +4,6 @@
 #include <termios.h>
 #include <string.h>
 #include <stdlib.h>
-#include <unistd.h>
-#include <stdarg.h>
-#include <sys/wait.h>
-#include <sys/types.h>
 #define maxargs 255
 
 #include "inc/term.h"
@@ -64,30 +60,4 @@ int main(int argc, char *argv[]) {
 
 	arg_freetable(argtable, sizeof(argtable) / sizeof(argtable[0]));
 	return 0;
-}
-
-void cmd_exec(char* _str, char* _com) { 
-	pid_t p;
-	p=0;
-	char* args[maxargs];	
-	p=fork();
-	int* status;
-	wait(status);
-	if (p==0){
-		char* str;
-		int i=0;
-		str=_str;
-		char* pch;
-		pch=strtok(str," ");
-		while (pch!=NULL){
-			args[i++]=pch;
-			pch=strtok(NULL," ");
-		}
-		args[i]=(char*)0;
-		if (execvp(_com,args)==-1){
-			printf("No such file: ");
-			puts(_com);
-		}
-		exit(-1);
-	}
 }

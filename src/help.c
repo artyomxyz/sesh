@@ -2,7 +2,7 @@
 
 #include <stdio.h>
 
-void cmd_help(char* _str, char* _com) {
+void help_cmd(int argc, char** argv) {
 	char str[50];
 	FILE *pfile;
 	pfile = fopen("/usr/share/sesh/HELP","r");
