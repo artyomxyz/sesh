@@ -9,6 +9,10 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#define KEY_BACKSPACE 8
+#define KEY_DELETE 127
+#define KEY_ARROWS 27
+#define KEY_TAB 9
 
 
 void repl () {
@@ -34,12 +38,12 @@ void repl () {
 				break;
 			}
 			switch(c[0]) {
-				case 8: 
-				case 127:
+				case KEY_BACKSPACE: 
+				case KEY_DELETE:
 					write(STDOUT_FILENO, "\b \b", 3);
 					cur--;
 					break;
-				case 27:
+				case KEY_ARROWS:
 					read(STDIN_FILENO, &c, 2);
 					if (c[0] == '['){
 						if (c[1] == 'A'){
@@ -53,7 +57,7 @@ void repl () {
 						}
 					}
 					break;
-				case 9:
+				case KEY_TAB:
 					write(STDOUT_FILENO, "	", 1);
 					break;
 					
