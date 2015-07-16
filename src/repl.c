@@ -36,9 +36,7 @@ void repl () {
 			switch(c) {
 				case 8: 
 				case 127:
-					write(STDIN_FILENO, "\b", 2);
-					write(STDOUT_FILENO, " ", 1);
-					write(STDIN_FILENO, "\b", 2);
+					write(STDIN_FILENO, "\b \b", 3);
 					cur--;
 					break;
 					
