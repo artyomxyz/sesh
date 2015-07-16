@@ -43,6 +43,7 @@ void repl () {
 			switch(c[0]) {
 				case KEY_BACKSPACE: 
 				case KEY_DELETE:
+					if (cur == buff) break;
 					write(STDOUT_FILENO, "\b \b", 3);
 					cur--;
 					break;
@@ -97,6 +98,8 @@ void repl () {
   		argv[argc] = NULL;
 
 		// Route
+  		if (argc == 0) continue;
+
 		if (strcmp(argv[0], "exit") == 0) {
 			break;
 		}
