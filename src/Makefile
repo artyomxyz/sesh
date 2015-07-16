@@ -1,3 +1,4 @@
+.PHONY : clean install uninstall
 SRC_FILES = $(wildcard *.c)
 OBJ_FILES = $(SRC_FILES:%.c=../obj/%.o)
 INSTALL_PATH?=/usr
@@ -24,10 +25,17 @@ clean:
 	@rm -rf ../bin
 
 install: all
-	cp ../bin/sesh $(INSTALL_PATH)/bin
-	mkdir -p $(INSTALL_PATH)/share/sesh
-	cp share/HELP $(INSTALL_PATH)/share/sesh
+	@echo Installing...
+	@cp ../bin/sesh $(INSTALL_PATH)/bin
+	@mkdir -p $(INSTALL_PATH)/share/sesh
+	@cp share/HELP $(INSTALL_PATH)/share/sesh
 
+uninstall: all
+	@echo Uninstalling...
+	@rm -f $(INSTALL_PATH)/bin/sesh
+	@rm -f $(INSTALL_PATH)/share/sesh/HELP
+	@rmdir $(INSTALL_PATH)/share/sesh
+	
 # argtable
 
 ../obj/argtable3.o: deps/argtable3/argtable3.c
