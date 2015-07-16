@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <string.h>
 
+
 void repl () {
 	char typecom[][8] = { "cd", "history", "help", "ls" };
 	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
@@ -17,7 +18,9 @@ void repl () {
 		// Prompt
 		char cwd[256];
 		getcwd(cwd, 256);
-		printf("%s > ", cwd);
+		// printf("%s > ", cwd);
+		write(STDOUT_FILENO, cwd, strlen(cwd));
+		write(STDOUT_FILENO, " > ", 3);
 		
 		
 		// Read
@@ -25,12 +28,29 @@ void repl () {
 		char *cur = buff;
 		char c;
 
-		while ( (c=getchar()) != '\n' ) {
-			putchar(c);
-			*(cur++) = c;
+		while (read(STDIN_FILENO, &c, 1) != 0) {
+			if (c == '\n') {
+				break;
+			}
+			switch(c) {
+				case 8: 
+				case 127:
+					write(STDIN_FILENO, "\b \b", 3);
+					cur--;
+					break;
+					
+					
+				
+				default: 
+					write(STDOUT_FILENO, &c, 1);
+					*(cur++) = c;
+					break;
+			}
 		}
 		*cur = '\0';
-		putchar('\n');
+		char eol = '\n';
+		write(STDOUT_FILENO, &eol, 1);
+		
 
 		// Save entry in history
 		history_save_cmd(buff);
