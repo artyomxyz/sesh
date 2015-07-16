@@ -1,46 +1,40 @@
 #include "inc/history.h"
 
+#include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 FILE* history_fd;
 
-void history_init()
-{
-	const char * ghp(const char * ot)
-	{
-		static char buff[256];
-		strcpy(buff, getenv("HOME"));
-		strcat(buff, ot);
-		return buff;
-	}
-	history_fd=fopen("ghp('.sesh_history')","a+");
+void history_init() {
+	char filename[256];
+	const char *home = getenv("HOME");
+	strcpy(filename, home);
+	strcat(filename, "/.sesh_history");
+	history_fd = fopen(filename, "a+");
 }
 
-void history_cmd(int argc, char** argv)
-{
+void history_cmd(int argc, char** argv) {
 	char str[50];
-	history_init();
-	if (history_fd==NULL)
-	{
-		puts("History is empty.\n");
+	if (history_fd==NULL) {
+		puts("History is empty.");
 	} else {
-		printf("This is history:\n");
-		while (fgets(str,50,history_fd)!=NULL)
-		{
+		printf("This is history:");
+		fseek(history_fd, 0, SEEK_SET);
+		while (fgets(str, 50, history_fd) != NULL) {
 			printf("%s",str);
 		}
+		puts("");
 	}
-	fclose(history_fd);
 }
 
-void history_save_cmd(char* _com)
-{
-	history_init();
-	if (history_fd==NULL)
-	{
-		puts("Problems!\n");
+void history_save_cmd(char* cmd) {
+	if (history_fd == NULL) {
+		puts("Problems!");
+	} else {
+		fseek(history_fd, 0, SEEK_END);
+
+		fputs(cmd, history_fd);
+		fputs("\n", history_fd);
 	}
-	fputs(_com,history_fd);
-	fputs("\n",history_fd);
-	fclose(history_fd);
 }
