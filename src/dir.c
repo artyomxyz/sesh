@@ -7,9 +7,23 @@
 #include <dirent.h>
 
 void dir_cmd(int argc, char** argv) {
-	int i = chdir(argv[1]);
-	if (i != 0) {
-		puts("\nUnable to change directory");
+	if (argc == 1)
+	{
+		int i = chdir(getenv("HOME"));
+		if (i != 0) {
+			puts("\nUnable to change directory");
+		}
+/*		char* p;
+		p = getenv("HOME");
+		chdir(p);
+*/		
+	}	
+	else
+	{
+		int i = chdir(argv[1]);
+		if (i != 0) {
+			puts("\nUnable to change directory");
+		}
 	}
 }
 
