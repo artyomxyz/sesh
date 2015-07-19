@@ -28,7 +28,7 @@ void replace_buf(char *cmd_name){
 		cur--;
 	}
 	//cur++;
-	while (*cmd_name != '\0'){
+	while (*cmd_name != '\n'){
 		*(cur++)=*(cmd_name++);
 	}
 	*(cur)='\0';
@@ -84,9 +84,11 @@ void repl () {
 							case KEY_SC_UP:
 								//write(STDOUT_FILENO, "up", 2);
 								com_name=history_entry(h_count);
-								replace_buf(com_name);
-								//write(STDOUT_FILENO,com_name,strlen(com_name));	
-								h_count++;
+								if (com_name!=NULL){
+									replace_buf(com_name);
+									//write(STDOUT_FILENO,com_name,strlen(com_name));	
+									h_count++;
+								}
 								break;
 							case KEY_SC_DOWN:
 								if (h_count<=0) {
@@ -94,8 +96,10 @@ void repl () {
 									replace_buf("");
 								} else {
 									com_name=history_entry(h_count);
-									replace_buf(com_name);
-									//write(STDOUT_FILENO,com_name,strlen(com_name));
+									if (com_name!=NULL){
+										replace_buf(com_name);
+										//write(STDOUT_FILENO,com_name,strlen(com_name));
+									}
 									h_count--;
 								}
 								break;
@@ -120,11 +124,7 @@ void repl () {
 		}
 		*cur = '\0';
 		char eol = '\n';
-		write(STDOUT_FILENO, &eol, 1);
-		
-
-		// Save entry in history
-		history_save_cmd(buff);
+		write(STDOUT_FILENO, &eol, 1);		
 
 		// Parse
 
@@ -139,6 +139,12 @@ void repl () {
   		}
   		argv[argc] = NULL;
 
+		// Save entry in history
+		
+		if (argc>0){
+			history_save_cmd(buff);
+		}
+		
 		// Route
   		if (argc == 0) continue;
 
