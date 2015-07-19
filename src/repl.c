@@ -17,6 +17,23 @@
 #define KEY_SC_RIGHT 'C'
 #define KEY_SC_LEFT 'D'
 
+char buff[1024];
+char *cur;
+
+void replace_buf(char *cmd_name){
+	//char *cmd_cur=cmd_name;
+	while((--cur)> buff) {
+		write(STDOUT_FILENO, "\b \b", 3);
+	}
+	//cur++;
+	while (*cmd_name!='\0'){
+		write(STDOUT_FILENO,cmd_name,1);
+		*(cur++)=*(cmd_name++);
+	}
+	*(cur++)='\0';		
+	write(STDOUT_FILENO,buff,strlen(buff));
+}
+
 /* Description:
 *	REPL = Read, Evaluate, Print, Loop	
 *	It receives commands entered by the user and transmits them to the corresponding functions.  
@@ -25,8 +42,6 @@
 *  Returnes: 
 *	void
 */
-
-
 
 void repl () {
 	char typecom[][8] = { "cd", "history", "help", "ls" };
@@ -42,12 +57,16 @@ void repl () {
 		
 		
 		// Read
-		char buff[1024];
-		char *cur = buff;
+		cur = buff;
 		char c[2];
+
+		
+		char *com_name=NULL;
+		int h_count=0;
 
 		while (read(STDIN_FILENO, &c, 1) != 0) {
 			if (c[0] == '\n') {
+				h_count=0;
 				break;
 			}
 			switch(c[0]) {
@@ -62,10 +81,21 @@ void repl () {
 					if (c[0] == '['){
 						switch(c[1]){
 							case KEY_SC_UP:
-								write(STDOUT_FILENO, "up", 2);
+								//write(STDOUT_FILENO, "up", 2);
+								com_name=history_entry(h_count);
+								replace_buf(com_name);
+								//write(STDOUT_FILENO,com_name,strlen(com_name));	
+								h_count++;
 								break;
 							case KEY_SC_DOWN:
-								write(STDOUT_FILENO, "down", 4);
+								if (h_count<0) {
+									write(STDOUT_FILENO,"fubar",5);	
+								} else {
+									com_name=history_entry(h_count);
+									replace_buf(com_name);
+									//write(STDOUT_FILENO,com_name,strlen(com_name));
+									h_count--;
+								}
 								break;
 							case KEY_SC_RIGHT:
 								write(STDOUT_FILENO, "right", 5);
@@ -73,8 +103,8 @@ void repl () {
 							case KEY_SC_LEFT:
 								write(STDOUT_FILENO, "left", 4);
 								break;
-						}
-					}
+							     }
+							}
 					break;
 				case KEY_TAB:
 					write(STDOUT_FILENO, "	", 1);

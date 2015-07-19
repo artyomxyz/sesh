@@ -69,22 +69,10 @@ void history_save_cmd(char* cmd) {
 *  Returnes: 
 *	his_entry - a pointer to the command
 */
-char* history_entry(int i)
-{
-	char* his_entry = NULL;
-	int count = 0;
-	char str[256];
-	if (history_fd == NULL) {
-		puts("Problems!");
-	} else {
-		while (fgets(str, 256, history_fd) != NULL) {
-			count++;
-			if (count == i) {
-				his_entry = str;
-				break;
-			}
-		}
-	}
-	fclose(history_fd);
-	return(his_entry);
+
+char history_entry_buff[256];
+char* history_entry(int i) {
+	
+	sprintf(history_entry_buff,"entry %d",i);
+	return history_entry_buff;	
 }
