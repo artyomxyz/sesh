@@ -21,17 +21,18 @@ char buff[1024];
 char *cur;
 
 void replace_buf(char *cmd_name){
+	//printf("[%d]\n", cur-buff);
 	//char *cmd_cur=cmd_name;
-	while((--cur)> buff) {
+	while(cur > buff) {
 		write(STDOUT_FILENO, "\b \b", 3);
+		cur--;
 	}
 	//cur++;
-	while (*cmd_name!='\0'){
-		write(STDOUT_FILENO,cmd_name,1);
+	while (*cmd_name != '\0'){
 		*(cur++)=*(cmd_name++);
 	}
-	*(cur++)='\0';		
-	write(STDOUT_FILENO,buff,strlen(buff));
+	*(cur)='\0';
+	write(STDOUT_FILENO, buff, strlen(buff));
 }
 
 /* Description:
