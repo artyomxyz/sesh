@@ -89,8 +89,9 @@ void repl () {
 								h_count++;
 								break;
 							case KEY_SC_DOWN:
-								if (h_count<0) {
-									write(STDOUT_FILENO,"fubar",5);	
+								if (h_count<=0) {
+									//write(STDOUT_FILENO,"fubar",5);	
+									replace_buf("");
 								} else {
 									com_name=history_entry(h_count);
 									replace_buf(com_name);
