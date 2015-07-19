@@ -22,19 +22,20 @@ void history_init() {
 	strcpy(filename, home);
 	strcat(filename, "/.sesh_history");
 	history_fd = fopen(filename, "a+");
-	while (1) {
-	 	char* cmd=(char *)malloc(sizeof(char)*256);
-	 	
-	 	if (fgets(cmd, 256, history_fd) != NULL) {
-	 		free(cmd);
-	 		break;	 		
-	 	}
-	 	history_entries[hist_count++]=cmd;
-	 	printf("%s\n",cmd);
-		//printf("%d %s",count, str);
-			
+
+	if (history_fd != NULL) {
+		fseek(history_fd, 0, SEEK_SET);
+		while (1) {
+		 	char* cmd=(char*)malloc(256 * sizeof(char));
+		 	
+		 	if (fgets(cmd, 256, history_fd) == NULL) {
+		 		free(cmd);
+		 		break;
+		 	}
+		 	history_entries[hist_count++]=cmd;
+		}
 	}
-	printf("%d\n",hist_count);
+
 }
 /* Description:
 * 	The function of outputting of history from file. 
@@ -55,9 +56,8 @@ void history_cmd(int argc, char** argv) {
 		fseek(history_fd, 0, SEEK_SET);
 		while (fgets(str, 256, history_fd) != NULL) {
 			count++;
-			printf("%d %s",count, str);
+			printf("%d %s", count, str);
 		}
-		puts("");
 	}
 }
 /* Description:
