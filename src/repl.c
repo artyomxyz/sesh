@@ -4,6 +4,7 @@
 #include "inc/help.h"
 #include "inc/dir.h"
 #include "inc/exec.h"
+#include "inc/autocomplete.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -38,7 +39,9 @@ void repl () {
 		getcwd(cwd, 256);
 		// printf("%s > ", cwd);
 		write(STDOUT_FILENO, cwd, strlen(cwd));
-		write(STDOUT_FILENO, " > ", 3);
+		char invite[] = " > ";
+		write(STDOUT_FILENO, invite, strlen(invite));
+		//write(STDOUT_FILENO, " > ", 3);
 		
 		
 		// Read
@@ -76,10 +79,35 @@ void repl () {
 						}
 					}
 					break;
-				case KEY_TAB:
-					write(STDOUT_FILENO, "	", 1);
-					break;
+				case KEY_TAB: {	
+					write(STDOUT_FILENO, "\n", 1);
 					
+					// Identifying of the sourse of autocompleting
+					*(cur++) = '\0';					
+					int i = 0;
+					while(*(cur-i) != ' ') {
+						i++;
+					}
+					
+					// Search variants
+					autocomplete_find(cur-i+1);
+					cur--;					
+					
+					int amountVar = 0;					
+					while(autocomplete_array[amountVar] != NULL) {	
+						puts(autocomplete_array[amountVar]);
+						amountVar++;
+					}
+			
+					// Restore cursor position
+					for(i = 0; i <= amountVar; i++) {
+						write(STDOUT_FILENO, "\033[F", 3);
+					}
+					for(i = 0; i < (strlen(cwd)+strlen(invite)+(cur-buff)); i++) {
+						write(STDOUT_FILENO, "\033[C", 3);
+					};
+				}
+					break;
 				default: 
 					write(STDOUT_FILENO, &c, 1);
 					*(cur++) = c[0];
