@@ -35,6 +35,43 @@ void replace_buf(char *cmd_name){
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
 
+int parse_args(char* buff, char** argv) {
+	int argc = 0;
+
+	while (1) {
+		if (buff == '\0') break;
+
+		argv[argc++] = buff;
+
+		// Search begin of next argument
+
+		short notEscaped = 1;
+		short slashEscaped = 0;
+
+		while (*buff != '\0') {
+			if (*buff == ' ' && notEscaped) break;
+			if (*buff == '"' && !slashEscaped) notEscaped = !notEscaped;
+
+			slashEscaped = 0;
+			if (*buff == '\\') slashEscaped = 1;
+
+			buff++;
+		}
+
+		if (*buff != '\0') {
+			*buff = '\0';
+			buff++;
+		} else {
+			break;
+		}
+	}
+
+	printf("%d\n", argc);
+
+	argv[argc] = NULL;
+	return argc;
+}
+
 /* Description:
 *	REPL = Read, Evaluate, Print, Loop	
 *	It receives commands entered by the user and transmits them to the corresponding functions.  
@@ -128,17 +165,8 @@ void repl () {
 		strcpy(buffcpy, buff);
 
 		// Parse
-
-		int argc = 0;
 		char* argv[256];
-
-
-		char* pch = strtok(buff, " ");
-  		while (pch != NULL) {
-  			argv[argc++] = pch;
-  			pch = strtok(NULL, " ");
-  		}
-  		argv[argc] = NULL;
+		int argc = parse_args(buff, argv);
 
 		// Save entry in history
 		
