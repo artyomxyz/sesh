@@ -16,7 +16,7 @@ char autocomplete_buff[8192];
 *  Returnes: 
 *	A pointer to an array of strings consisting of all possible options for autocompletion.
 */
-char** autocomplete(int argc, char** argv) {
+char** autocomplete_find(char* f) {
 	struct dirent *entry;
 	char name_dir[256];
 
@@ -34,8 +34,8 @@ char** autocomplete(int argc, char** argv) {
 	while ( (entry = readdir(dir)) != NULL ) {	
 		int i = 0;
 		int notPrefix = 0;	
-		while((argv[1][i] != '\0')) {
-			if(entry->d_name[i] != argv[1][i]) {
+		while((f[i] != '\0')) {
+			if(entry->d_name[i] != f[i]) {
 				notPrefix = 1;
 				break;
 			}
@@ -50,7 +50,6 @@ char** autocomplete(int argc, char** argv) {
 			i = 0;
 			while(entry->d_name[i]!=0) {
 				autocomplete_buff[Scounter] = entry->d_name[i];
-				printf("%c\n", autocomplete_buff[Scounter]);
 				Scounter++;
 				i++;
 			}
