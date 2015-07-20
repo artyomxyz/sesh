@@ -17,7 +17,7 @@
 #define KEY_SC_RIGHT 'C'
 #define KEY_SC_LEFT 'D'
 
-char buff[1024];
+char buff[1024], buffcpy[1024];
 char *cur;
 
 void replace_buf(char *cmd_name){
@@ -124,7 +124,8 @@ void repl () {
 		}
 		*cur = '\0';
 		char eol = '\n';
-		write(STDOUT_FILENO, &eol, 1);		
+		write(STDOUT_FILENO, &eol, 1);
+		strcpy(buffcpy, buff);
 
 		// Parse
 
@@ -141,8 +142,8 @@ void repl () {
 
 		// Save entry in history
 		
-		if (argc>0){
-			history_save_cmd(buff);
+		if (argc > 0){
+			history_save_cmd(buffcpy);
 		}
 		
 		// Route

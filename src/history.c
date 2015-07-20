@@ -72,14 +72,13 @@ void history_save_cmd(char* cmd) {
 		puts("Problems!");
 	} else {
 		fseek(history_fd, 0, SEEK_END);
-
-		fputs(cmd, history_fd);
-		fputs("\n", history_fd);
 		
 		char* cmd_copy=(char*)malloc(256 * sizeof(char));
-		strcpy(cmd_copy,cmd);
-		history_entries[hist_count++]=cmd_copy;	
-		
+		sprintf(cmd_copy, "%s\n", cmd);
+
+		fprintf(history_fd, cmd_copy);
+		fflush(history_fd);
+		history_entries[hist_count++] = cmd_copy;
 	}
 }
 
@@ -93,7 +92,7 @@ void history_save_cmd(char* cmd) {
 
 char history_entry_buff[256];
 char* history_entry(int i) {
-	if ((hist_count-i-1)>=0) {
+	if ((hist_count-i-1) >= 0) {
 		return history_entries[hist_count-i-1];
 	} else {
 		return NULL;
