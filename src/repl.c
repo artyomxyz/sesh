@@ -18,6 +18,59 @@
 #define KEY_SC_RIGHT 'C'
 #define KEY_SC_LEFT 'D'
 
+char buff[1024], buffcpy[1024];
+char *cur;
+
+void replace_buf(char *cmd_name){
+	//printf("[%d]\n", cur-buff);
+	//char *cmd_cur=cmd_name;
+	while(cur > buff) {
+		write(STDOUT_FILENO, "\b \b", 3);
+		cur--;
+	}
+	//cur++;
+	while (*cmd_name != '\n'){
+		*(cur++)=*(cmd_name++);
+	}
+	*(cur)='\0';
+	write(STDOUT_FILENO, buff, strlen(buff));
+}
+
+int parse_args(char* buff, char** argv) {
+	int argc = 0;
+
+	while (1) {
+		if (buff == '\0') break;
+
+		argv[argc++] = buff;
+
+		// Search begin of next argument
+
+		short notEscaped = 1;
+		short slashEscaped = 0;
+
+		while (*buff != '\0') {
+			if (*buff == ' ' && notEscaped) break;
+			if (*buff == '"' && !slashEscaped) notEscaped = !notEscaped;
+
+			slashEscaped = 0;
+			if (*buff == '\\') slashEscaped = 1;
+
+			buff++;
+		}
+
+		if (*buff != '\0') {
+			*buff = '\0';
+			buff++;
+		} else {
+			break;
+		}
+	}
+
+	argv[argc] = NULL;
+	return argc;
+}
+
 /* Description:
 *	REPL = Read, Evaluate, Print, Loop	
 *	It receives commands entered by the user and transmits them to the corresponding functions.  
@@ -27,14 +80,16 @@
 *	void
 */
 
-
-
 void repl () {
 	char typecom[][8] = { "cd", "history", "help", "ls" };
 	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
-	
+	int prefixCh = 0;
+	char autoarray[1024];	
+	char* autoargv[256];
+
 	while (1) {
 		// Prompt
+		char c[2];
 		char cwd[256];
 		getcwd(cwd, 256);
 		// printf("%s > ", cwd);
@@ -43,14 +98,22 @@ void repl () {
 		write(STDOUT_FILENO, invite, strlen(invite));
 		//write(STDOUT_FILENO, " > ", 3);
 		
+		if (prefixCh == 1) {
+			write(STDOUT_FILENO, buff, strlen(buff));
+			prefixCh = 0;
+			cur--;
+		}
+		else {
+			// Read
+			cur = buff;	
+		}
 		
-		// Read
-		char buff[1024];
-		char *cur = buff;
-		char c[2];
+		char *com_name=NULL;
+		int h_count=0;
 
 		while (read(STDIN_FILENO, &c, 1) != 0) {
 			if (c[0] == '\n') {
+				h_count=0;
 				break;
 			}
 			switch(c[0]) {
@@ -65,10 +128,26 @@ void repl () {
 					if (c[0] == '['){
 						switch(c[1]){
 							case KEY_SC_UP:
-								write(STDOUT_FILENO, "up", 2);
+								//write(STDOUT_FILENO, "up", 2);
+								com_name=history_entry(h_count);
+								if (com_name!=NULL){
+									replace_buf(com_name);
+									//write(STDOUT_FILENO,com_name,strlen(com_name));	
+									h_count++;
+								}
 								break;
 							case KEY_SC_DOWN:
-								write(STDOUT_FILENO, "down", 4);
+								if (h_count<=0) {
+									//write(STDOUT_FILENO,"fubar",5);	
+									replace_buf("");
+								} else {
+									com_name=history_entry(h_count);
+									if (com_name!=NULL){
+										replace_buf(com_name);
+										//write(STDOUT_FILENO,com_name,strlen(com_name));
+									}
+									h_count--;
+								}
 								break;
 							case KEY_SC_RIGHT:
 								write(STDOUT_FILENO, "right", 5);
@@ -76,36 +155,28 @@ void repl () {
 							case KEY_SC_LEFT:
 								write(STDOUT_FILENO, "left", 4);
 								break;
-						}
-					}
+							     }
+							}
 					break;
-				case KEY_TAB: {	
-					write(STDOUT_FILENO, "\n", 1);
-					
+				case KEY_TAB: {
 					// Identifying of the sourse of autocompleting
-					*(cur++) = '\0';					
+					prefixCh = 1;
+					*(cur++) = '\0';
 					int i = 0;
-					while(*(cur-i) != ' ') {
+					while(buff[i] != '\0') {
+						autoarray[i] = buff[i];
 						i++;
 					}
+					autoarray[i] = '\0';
+					int n = parse_args(autoarray, autoargv);
 					
-					// Search variants
-					autocomplete_find(cur-i+1);
-					cur--;					
-					
-					int amountVar = 0;					
+					autocomplete_find(autoargv[n-1]);				
+					int amountVar = 0;
+					write(STDOUT_FILENO, "\n", 1);					
 					while(autocomplete_array[amountVar] != NULL) {	
 						puts(autocomplete_array[amountVar]);
 						amountVar++;
 					}
-			
-					// Restore cursor position
-					for(i = 0; i <= amountVar; i++) {
-						write(STDOUT_FILENO, "\033[F", 3);
-					}
-					for(i = 0; i < (strlen(cwd)+strlen(invite)+(cur-buff)); i++) {
-						write(STDOUT_FILENO, "\033[C", 3);
-					};
 				}
 					break;
 				default: 
@@ -113,46 +184,46 @@ void repl () {
 					*(cur++) = c[0];
 					break;
 			}
-		}
-		*cur = '\0';
-		char eol = '\n';
-		write(STDOUT_FILENO, &eol, 1);
-		
-
-		// Save entry in history
-		history_save_cmd(buff);
-
-		// Parse
-
-		int argc = 0;
-		char* argv[256];
-
-
-		char* pch = strtok(buff, " ");
-  		while (pch != NULL) {
-  			argv[argc++] = pch;
-  			pch = strtok(NULL, " ");
-  		}
-  		argv[argc] = NULL;
-
-		// Route
-  		if (argc == 0) continue;
-
-		if (strcmp(argv[0], "exit") == 0) {
-			break;
-		}
-
-		int j;
-		for (j = 0; j < 4; j++) {
-			if (strcmp(argv[0], typecom[j]) == 0) {
-				arr_func[j](argc, argv);
+			if (prefixCh == 1) {
 				break;
 			}
 		}
 
-		if (j == 4) {
-			exec_cmd(argc, argv);
-		}
+		*cur = '\0';
+		strcpy(buffcpy, buff);
+
+ 		if (prefixCh != 1) {
+			char eol = '\n';
+			write(STDOUT_FILENO, &eol, 1);
+			// Parse
+			char* argv[256];
+			int argc = parse_args(buff, argv);
+
+			// Save entry in history
+		
+			if (argc > 0){
+				history_save_cmd(buffcpy);
+			}
+		
+			// Route
+  			if (argc == 0) continue;
+
+			if (strcmp(argv[0], "exit") == 0) {
+				break;
+			}
+
+			int j;
+			for (j = 0; j < 4; j++) {
+				if (strcmp(argv[0], typecom[j]) == 0) {
+					arr_func[j](argc, argv);
+					break;
+				}
+			}
+
+			if (j == 4) {
+				exec_cmd(argc, argv);
+			}
+	}
 		// Loop		
 	}
 }
