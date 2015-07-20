@@ -13,12 +13,29 @@ FILE* history_fd;
 *  Returnes: 
 *	void
 */
+char *history_entries[1000];
+int hist_count=0;
+
 void history_init() {
 	char filename[256];
 	const char *home = getenv("HOME");
 	strcpy(filename, home);
 	strcat(filename, "/.sesh_history");
 	history_fd = fopen(filename, "a+");
+
+	if (history_fd != NULL) {
+		fseek(history_fd, 0, SEEK_SET);
+		while (1) {
+		 	char* cmd=(char*)malloc(256 * sizeof(char));
+		 	
+		 	if (fgets(cmd, 256, history_fd) == NULL) {
+		 		free(cmd);
+		 		break;
+		 	}
+		 	history_entries[hist_count++]=cmd;
+		}
+	}
+
 }
 /* Description:
 * 	The function of outputting of history from file. 
@@ -39,9 +56,8 @@ void history_cmd(int argc, char** argv) {
 		fseek(history_fd, 0, SEEK_SET);
 		while (fgets(str, 256, history_fd) != NULL) {
 			count++;
-			printf("%d %s",count, str);
+			printf("%d %s", count, str);
 		}
-		puts("");
 	}
 }
 /* Description:
@@ -56,9 +72,13 @@ void history_save_cmd(char* cmd) {
 		puts("Problems!");
 	} else {
 		fseek(history_fd, 0, SEEK_END);
+		
+		char* cmd_copy=(char*)malloc(256 * sizeof(char));
+		sprintf(cmd_copy, "%s\n", cmd);
 
-		fputs(cmd, history_fd);
-		fputs("\n", history_fd);
+		fprintf(history_fd, cmd_copy);
+		fflush(history_fd);
+		history_entries[hist_count++] = cmd_copy;
 	}
 }
 
@@ -69,22 +89,12 @@ void history_save_cmd(char* cmd) {
 *  Returnes: 
 *	his_entry - a pointer to the command
 */
-char* history_entry(int i)
-{
-	char* his_entry = NULL;
-	int count = 0;
-	char str[256];
-	if (history_fd == NULL) {
-		puts("Problems!");
+
+char history_entry_buff[256];
+char* history_entry(int i) {
+	if ((hist_count-i-1) >= 0) {
+		return history_entries[hist_count-i-1];
 	} else {
-		while (fgets(str, 256, history_fd) != NULL) {
-			count++;
-			if (count == i) {
-				his_entry = str;
-				break;
-			}
-		}
+		return NULL;
 	}
-	fclose(history_fd);
-	return(his_entry);
 }
