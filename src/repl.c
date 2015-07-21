@@ -30,15 +30,14 @@ void erase_char() {
 	}
 }
 
-void replace_buf(unsigned char* cmd_name) {
-	// printf("[%d]\n", cur-buff);
-	// char *cmd_cur=cmd_name;
+void replace_buf(unsigned char* new_buffer) {
 	while (cur > buff) {
 		erase_char();
 	}
-	while (*cmd_name != '\n') {
-		*(cur++) = *(cmd_name++);
+	while (*new_buffer != '\n' && *new_buffer != '\0') {
+		*(cur++) = *(new_buffer++);
 	}
+
 	*(cur) = '\0';
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
@@ -130,23 +129,19 @@ void repl() {
 					if (c[0] == '[') {
 						switch (c[1]) {
 							case KEY_SC_UP:
-								// write(STDOUT_FILENO, "up", 2);
 								command = history_entry(history_index);
 								if (command != NULL) {
 									replace_buf(command);
-									// write(STDOUT_FILENO,command,strlen(command));
 									history_index++;
 								}
 								break;
 							case KEY_SC_DOWN:
 								if (history_index <= 0) {
-									// write(STDOUT_FILENO,"fubar",5);
 									replace_buf("");
 								} else {
 									command = history_entry(history_index);
 									if (command != NULL) {
 										replace_buf(command);
-										// write(STDOUT_FILENO,command,strlen(command));
 									}
 									history_index--;
 								}
