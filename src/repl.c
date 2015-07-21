@@ -28,6 +28,7 @@ void erase_char() {
 	if (*cur >= 128) {
 		cur--;
 	}
+	*(cur) = '\0';
 }
 
 void replace_buf(unsigned char* new_buffer) {
@@ -119,9 +120,9 @@ void repl() {
 			switch (c[0]) {
 				case KEY_BACKSPACE:
 				case KEY_DELETE:
-					if (cur == buff)
-						break;
-					erase_char();
+					if (cur != buff) {
+						erase_char();
+					}
 					break;
 
 				case KEY_ARROWS:
@@ -163,10 +164,10 @@ void repl() {
 
 					char** suggestions = autocomplete_find(argv[argc - 1]);
 
-					write(STDOUT_FILENO, "\n", 1);
 
-					if (suggestions[1] != NULL || suggestions[0] == NULL) {
+					if (suggestions[0] != NULL && suggestions[1] != NULL) {
 						int i = 0;
+						write(STDOUT_FILENO, "\n", 1);
 						while (suggestions[i] != NULL) {
 							puts( suggestions[i++] );
 						}
@@ -175,7 +176,8 @@ void repl() {
 
 						write(STDOUT_FILENO, buff, strlen(buff));
 
-					} else {
+					} else if (suggestions[0] != NULL) {
+						write(STDOUT_FILENO, "\n", 1);
 						print_prompt();
 						cur -= strlen(argv[argc-1]);
 						while ((*cur++ = *suggestions[0]++) != 0);
