@@ -90,6 +90,7 @@ void repl () {
 	unsigned char typecom[][8] = { "cd", "history", "help", "ls" };
 	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
 	int prefixCh = 0;
+	int indSingle = 0;
 	char autoarray[1024];	
 	char* autoargv[256];
 
@@ -104,13 +105,30 @@ void repl () {
 		write(STDOUT_FILENO, invite, strlen(invite));
 		//write(STDOUT_FILENO, " > ", 3);
 		
+		// Read
 		if (prefixCh == 1) {
-			write(STDOUT_FILENO, buff, strlen(buff));
-			prefixCh = 0;
-			cur--;
+			if (indSingle != 1) {
+				write(STDOUT_FILENO, buff, strlen(buff));
+				prefixCh = 0;
+				cur--;
+			}
+			else {
+				while ((*(cur-1) != ' ') && (cur != buff)) {
+					cur--;
+				}
+				int i = 0;
+				while (autocomplete_array[0][i] != '\0') {
+					*(cur) = autocomplete_array[0][i];
+					i++;
+					cur++;
+				}
+				*(cur) = '\0';
+				write(STDOUT_FILENO, buff, strlen(buff));
+				indSingle = 0;
+				prefixCh = 0;
+			}
 		}
 		else {
-			// Read
 			cur = buff;	
 		}
 		
@@ -178,10 +196,15 @@ void repl () {
 					
 					autocomplete_find(autoargv[n-1]);				
 					int amountVar = 0;
-					write(STDOUT_FILENO, "\n", 1);					
-					while(autocomplete_array[amountVar] != NULL) {	
-						puts(autocomplete_array[amountVar]);
-						amountVar++;
+					write(STDOUT_FILENO, "\n", 1);	
+					if (autocomplete_array[1] != NULL) {			
+						while(autocomplete_array[amountVar] != NULL) {	
+							puts(autocomplete_array[amountVar]);
+							amountVar++;
+						}
+					}
+					else {
+						indSingle = 1;
 					}
 				}
 					break;
