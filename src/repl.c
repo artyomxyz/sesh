@@ -13,31 +13,32 @@
 #define KEY_DELETE 127
 #define KEY_ARROWS 27
 #define KEY_TAB 9
+#define KEY_RETURN '\n'
 #define KEY_SC_UP 'A'
 #define KEY_SC_DOWN 'B'
 #define KEY_SC_RIGHT 'C'
 #define KEY_SC_LEFT 'D'
 
 unsigned char buff[1024], buffcpy[1024];
-unsigned char *cur;
+unsigned char* cur;
 
-void erase_char(){
+void erase_char() {
 	write(STDOUT_FILENO, "\b \b", 3);
 	cur--;
 	if (*cur >= 128) {
 		cur--;
 	}
+	*(cur) = '\0';
 }
 
-void replace_buf(unsigned char *cmd_name) {
-	//printf("[%d]\n", cur-buff);
-	//char *cmd_cur=cmd_name;
+void replace_buf(unsigned char* new_buffer) {
 	while (cur > buff) {
 		erase_char();
 	}
-	while (*cmd_name != '\n'){
-		*(cur++)=*(cmd_name++);
+	while (*new_buffer != '\n' && *new_buffer != '\0') {
+		*(cur++) = *(new_buffer++);
 	}
+
 	*(cur) = '\0';
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
@@ -46,7 +47,8 @@ int parse_args(unsigned char* buff, char** argv) {
 	int argc = 0;
 
 	while (1) {
-		if (buff == '\0') break;
+		if (buff == '\0')
+			break;
 
 		argv[argc++] = buff;
 
@@ -56,11 +58,14 @@ int parse_args(unsigned char* buff, char** argv) {
 		short slashEscaped = 0;
 
 		while (*buff != '\0') {
-			if (*buff == ' ' && notEscaped) break;
-			if (*buff == '"' && !slashEscaped) notEscaped = !notEscaped;
+			if (*buff == ' ' && notEscaped)
+				break;
+			if (*buff == '"' && !slashEscaped)
+				notEscaped = !notEscaped;
 
 			slashEscaped = 0;
-			if (*buff == '\\') slashEscaped = 1;
+			if (*buff == '\\')
+				slashEscaped = 1;
 
 			buff++;
 		}
@@ -76,183 +81,154 @@ int parse_args(unsigned char* buff, char** argv) {
 	return argc;
 }
 
+void print_prompt() {
+	char cwd[256];
+	getcwd(cwd, 256);
+
+	write(STDOUT_FILENO, cwd, strlen(cwd));
+	char invite[] = " > ";
+	write(STDOUT_FILENO, invite, strlen(invite));
+}
 
 /* Description:
-*	REPL = Read, Evaluate, Print, Loop	
-*	It receives commands entered by the user and transmits them to the corresponding functions.  
+*	REPL = Read, Evaluate, Print, Loop
+*	It receives commands entered by the user and transmits them to the
+*corresponding functions.
 *  Receives:
 *	void
-*  Returnes: 
+*  Returnes:
 *	void
 */
 
-void repl () {
-	unsigned char typecom[][8] = { "cd", "history", "help", "ls" };
-	void(*arr_func[])(int, char**) = { dir_cmd, history_cmd, help_cmd, ls_cmd};
-	int prefixCh = 0;
-	int indSingle = 0;
-	char autoarray[1024];	
-	char* autoargv[256];
-
+void repl() {
 	while (1) {
 		// Prompt
 		unsigned char c[2];
-		char cwd[256];
-		getcwd(cwd, 256);
-		// printf("%s > ", cwd);
-		write(STDOUT_FILENO, cwd, strlen(cwd));
-		char invite[] = " > ";
-		write(STDOUT_FILENO, invite, strlen(invite));
-		//write(STDOUT_FILENO, " > ", 3);
-		
+		print_prompt();
+
 		// Read
-		if (prefixCh == 1) {
-			if (indSingle != 1) {
-				write(STDOUT_FILENO, buff, strlen(buff));
-				prefixCh = 0;
-				cur--;
-			}
-			else {
-				while ((*(cur-1) != ' ') && (cur != buff)) {
-					cur--;
-				}
-				int i = 0;
-				while (autocomplete_array[0][i] != '\0') {
-					*(cur) = autocomplete_array[0][i];
-					i++;
-					cur++;
-				}
-				*(cur) = '\0';
-				write(STDOUT_FILENO, buff, strlen(buff));
-				indSingle = 0;
-				prefixCh = 0;
-			}
-		}
-		else {
-			cur = buff;	
-		}
-		
-		unsigned char *com_name = NULL;
-		int h_count = 0;
+		cur = buff;
+
+		unsigned char* command = NULL;
+		int history_index = 0;
 
 		while (read(STDIN_FILENO, &c, 1) != 0) {
-			if (c[0] == '\n') {
-				h_count = 0;
+			if (c[0] == KEY_RETURN) {
 				break;
 			}
-			switch(c[0]) {
-				case KEY_BACKSPACE: 
+
+			switch (c[0]) {
+				case KEY_BACKSPACE:
 				case KEY_DELETE:
-					if (cur == buff) break;
-					erase_char();		
+					if (cur != buff) {
+						erase_char();
+					}
 					break;
-					
+
 				case KEY_ARROWS:
 					read(STDIN_FILENO, &c, 2);
-					if (c[0] == '['){
-						switch(c[1]){
+					if (c[0] == '[') {
+						switch (c[1]) {
 							case KEY_SC_UP:
-								//write(STDOUT_FILENO, "up", 2);
-								com_name = history_entry(h_count);
-								if (com_name!=NULL){
-									replace_buf(com_name);
-									//write(STDOUT_FILENO,com_name,strlen(com_name));	
-									h_count++;
+								command = history_entry(history_index);
+								if (command != NULL) {
+									replace_buf(command);
+									history_index++;
 								}
 								break;
 							case KEY_SC_DOWN:
-								if (h_count<=0) {
-									//write(STDOUT_FILENO,"fubar",5);	
+								if (history_index <= 0) {
 									replace_buf("");
 								} else {
-									com_name = history_entry(h_count);
-									if (com_name!=NULL){
-										replace_buf(com_name);
-										//write(STDOUT_FILENO,com_name,strlen(com_name));
+									command = history_entry(history_index);
+									if (command != NULL) {
+										replace_buf(command);
 									}
-									h_count--;
+									history_index--;
 								}
 								break;
 							case KEY_SC_RIGHT:
-								//write(STDOUT_FILENO, "right", 5);
+								// write(STDOUT_FILENO, "right", 5);
 								break;
 							case KEY_SC_LEFT:
-								//write(STDOUT_FILENO, "left", 4);
+								// write(STDOUT_FILENO, "left", 4);
 								break;
-							     }
-							}
-					break;
-				case KEY_TAB: {
-					// Identifying of the sourse of autocompleting
-					prefixCh = 1;
-					*(cur++) = '\0';
-					int i = 0;
-					while(buff[i] != '\0') {
-						autoarray[i] = buff[i];
-						i++;
-					}
-					autoarray[i] = '\0';
-					int n = parse_args(autoarray, autoargv);
-					
-					autocomplete_find(autoargv[n-1]);				
-					int amountVar = 0;
-					write(STDOUT_FILENO, "\n", 1);	
-					if (autocomplete_array[1] != NULL) {			
-						while(autocomplete_array[amountVar] != NULL) {	
-							puts(autocomplete_array[amountVar]);
-							amountVar++;
 						}
 					}
-					else {
-						indSingle = 1;
-					}
-				}
 					break;
-				default: 
+				case KEY_TAB:
+					// Identifying of the sourse of autocompleting
+					strcpy(buffcpy, buff);
+					char * argv[256];
+					int argc = parse_args(buffcpy, argv);
+
+					char** suggestions = autocomplete_find(argv[argc - 1]);
+
+
+					if (suggestions[0] != NULL && suggestions[1] != NULL) {
+						int i = 0;
+						write(STDOUT_FILENO, "\n", 1);
+						while (suggestions[i] != NULL) {
+							puts( suggestions[i++] );
+						}
+
+						print_prompt();
+
+						write(STDOUT_FILENO, buff, strlen(buff));
+
+					} else if (suggestions[0] != NULL) {
+						write(STDOUT_FILENO, "\n", 1);
+						print_prompt();
+						cur -= strlen(argv[argc-1]);
+						while ((*cur++ = *suggestions[0]++) != 0);
+						write(STDOUT_FILENO, buff, strlen(buff));
+					}
+
+					break;
+
+				default:
 					write(STDOUT_FILENO, &c, 1);
 					*(cur++) = c[0];
+					*(cur+1) = '\0';
 					break;
 			}
-			if (prefixCh == 1) {
+		}
+
+		strcpy(buffcpy, buff);
+
+		char eol = '\n';
+		write(STDOUT_FILENO, &eol, 1);
+		// Parse
+		char* argv[256];
+		int argc = parse_args(buff, argv);
+
+		// Save entry in history
+		if (argc > 0) {
+			history_save_cmd(buffcpy);
+		}
+
+		// Route
+		if (argc == 0) {
+			continue;
+		}
+
+		if (strcmp(argv[0], "exit") == 0) {
+			break;
+		}
+
+		unsigned char typecom[][8] = {"cd", "history", "help", "ls"};
+		void (*arr_func[])(int, char**) = {dir_cmd, history_cmd, help_cmd, ls_cmd};
+
+		int j;
+		for (j = 0; j < 4; j++) {
+			if (strcmp(argv[0], typecom[j]) == 0) {
+				arr_func[j](argc, argv);
 				break;
 			}
 		}
 
-		*cur = '\0';
-		strcpy(buffcpy, buff);
-
- 		if (prefixCh != 1) {
-			char eol = '\n';
-			write(STDOUT_FILENO, &eol, 1);
-			// Parse
-			char* argv[256];
-			int argc = parse_args(buff, argv);
-
-			// Save entry in history
-		
-			if (argc > 0){
-				history_save_cmd(buffcpy);
-			}
-		
-			// Route
-  			if (argc == 0) continue;
-
-			if (strcmp(argv[0], "exit") == 0) {
-				break;
-			}
-
-			int j;
-			for (j = 0; j < 4; j++) {
-				if (strcmp(argv[0], typecom[j]) == 0) {
-					arr_func[j](argc, argv);
-					break;
-				}
-			}
-
-			if (j == 4) {
-				exec_cmd(argc, argv);
-			}
-	}
-		// Loop		
+		if (j == 4) {
+			exec_cmd(argc, argv);
+		}
 	}
 }
