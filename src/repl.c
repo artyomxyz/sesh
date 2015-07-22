@@ -47,7 +47,7 @@ int parse_args(unsigned char* buff, char** argv) {
 	int argc = 0;
 
 	while (1) {
-		if (buff == '\0')
+		if (*buff == '\0')
 			break;
 
 		argv[argc++] = buff;
@@ -78,6 +78,7 @@ int parse_args(unsigned char* buff, char** argv) {
 		}
 	}
 	argv[argc] = NULL;
+	
 	return argc;
 }
 
@@ -108,6 +109,7 @@ void repl() {
 
 		// Read
 		cur = buff;
+		*cur = '\0';
 
 		unsigned char* command = NULL;
 		int history_index = 0;
@@ -164,7 +166,6 @@ void repl() {
 
 					char** suggestions = autocomplete_find(argv[argc - 1]);
 
-
 					if (suggestions[0] != NULL && suggestions[1] != NULL) {
 						int i = 0;
 						write(STDOUT_FILENO, "\n", 1);
@@ -175,12 +176,12 @@ void repl() {
 						print_prompt();
 
 						write(STDOUT_FILENO, buff, strlen(buff));
-
 					} else if (suggestions[0] != NULL) {
 						write(STDOUT_FILENO, "\n", 1);
 						print_prompt();
 						cur -= strlen(argv[argc-1]);
 						while ((*cur++ = *suggestions[0]++) != 0);
+						cur--;
 						write(STDOUT_FILENO, buff, strlen(buff));
 					}
 
@@ -227,7 +228,7 @@ void repl() {
 			}
 		}
 
-		if (j == 4) {
+		if (j == 4 && argc > 0) {
 			exec_cmd(argc, argv);
 		}
 	}
