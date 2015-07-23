@@ -4,7 +4,8 @@ cd:
 	cd [some_directory]   changes current directory to "some_directory", situated in current
 	cd [/some_directory]  changes current directory to root "some directory"
 exit          exits the programme
-filename      opens file with name "filename", situated in current directory
+filename      opens file with name "filename", situated in the PATH
+./filename    opens file with name "filename", situated in current directory
 help          shows full information about all available commands
 history       shows history of inputted commands
 ls:
@@ -12,4 +13,4 @@ ls:
 	ls [some_directory]   show list of files and directories in "current_directory/some_directory/"
 	ls [/some_directory]  show list of files and directories in root "some directory"
 
-all commands are going without []
+*NOTE* : all commands are going without []

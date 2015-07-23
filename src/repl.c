@@ -21,15 +21,48 @@
 
 unsigned char buff[1024], buffcpy[1024];
 unsigned char* cur;
+unsigned int len;
+
+void remove_char_from_buffer() {
+	for (unsigned char* i = cur ; i<=buff+len ; i++) {
+		*i = *(i+1);
+		write(STDOUT_FILENO, i, 1);
+	}
+	write(STDOUT_FILENO, " ", 1);
+	for (unsigned char* i = cur ; i<=buff+len ; i++) {
+		write(STDOUT_FILENO, "\b", 1);
+	}
+}
+
+/* Description:
+*	This function erases one character from the input field.
+*  Receives:
+*	void
+*  Returnes:
+*	void
+*/
 
 void erase_char() {
 	write(STDOUT_FILENO, "\b \b", 3);
 	cur--;
-	if (*cur >= 128) {
+	len--;
+	
+	remove_char_from_buffer();
+
+	if (*cur >= 128) { //if the character was two-byte character
 		cur--;
+		len--;
+		remove_char_from_buffer();
 	}
-	*(cur) = '\0';
 }
+
+/* Description:
+*	It cleans the input line to the end of prompt and displays a new received command.
+*  Receives:
+*	unsigned char* new_buffer -  A string that contains a new command, that were found in the history by the navigation by up-down arrows by user.
+*  Returnes:
+*	void
+*/
 
 void replace_buf(unsigned char* new_buffer) {
 	while (cur > buff) {
@@ -40,8 +73,19 @@ void replace_buf(unsigned char* new_buffer) {
 	}
 
 	*(cur) = '\0';
+	len = cur - buff;
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
+
+/* Description:
+*	Parses a string to the argv array and returns the number of arguments
+*  Receives:
+*	unsigned char* buff - A pointer to a string, which was inputted by user.
+*	char** argv - A pointer to an array of strings consisting of these arguments.
+*  Returnes:
+*	int parse_args - The number of arguments in the inputted command.
+*/
+
 
 int parse_args(unsigned char* buff, char** argv) {
 	int argc = 0;
@@ -78,9 +122,17 @@ int parse_args(unsigned char* buff, char** argv) {
 		}
 	}
 	argv[argc] = NULL;
-	
+
 	return argc;
 }
+
+/* Description:
+*	It displays the current directory and makes a prompt for entering commands by the user.
+*  Receives:
+*	void
+*  Returnes:
+*	void
+*/
 
 void print_prompt() {
 	char cwd[256];
@@ -110,6 +162,7 @@ void repl() {
 		// Read
 		cur = buff;
 		*cur = '\0';
+		len = 0;
 
 		unsigned char* command = NULL;
 		int history_index = 0;
@@ -150,10 +203,15 @@ void repl() {
 								}
 								break;
 							case KEY_SC_RIGHT:
-								// write(STDOUT_FILENO, "right", 5);
+								if (cur < buff+len) {
+									write(STDOUT_FILENO, cur++, 1);
+								}
 								break;
 							case KEY_SC_LEFT:
-								// write(STDOUT_FILENO, "left", 4);
+								if (cur > buff) {
+									write(STDOUT_FILENO, "\b", 1);
+									cur--;
+								}
 								break;
 						}
 					}
@@ -188,9 +246,33 @@ void repl() {
 					break;
 
 				default:
-					write(STDOUT_FILENO, &c, 1);
+					len++;
+					for (unsigned char* i = buff + len ; i>cur ; i--) {
+						*i = *(i-1);
+					}
+
 					*(cur++) = c[0];
-					*(cur+1) = '\0';
+
+					int j = 0;
+
+					if (c[0] >= 128) {
+						read(STDIN_FILENO, c, 1);
+						len++;
+						for (unsigned char* i = buff + len ; i>cur ; i--) {
+							*i = *(i-1);
+						}
+
+						*(cur++) = c[0];
+						j=1;
+					}
+
+					for (unsigned char* i = cur-1-j ; i<buff+len ; i++) {
+						write(STDOUT_FILENO, i, 1);
+					}
+
+					for (unsigned char* i = cur ; i<buff+len ; i++) {
+						write(STDOUT_FILENO, "\b", 1);
+					}
 					break;
 			}
 		}
