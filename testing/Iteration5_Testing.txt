@@ -1,0 +1,374 @@
+Test case 1.
+Description:
+-Change the directory to .../sesh/src
+-Use "make install" command
+
+Expected result:
+The programme should install to /usr/bin. This folder should contain file "sesh" now.
+
+Output format: Installing...
+
+Result: PASS.
+
+Test case 2.
+Description:
+-Go to "/" directory
+-Use "sesh" command
+
+Expected result:
+The programme should launch, show the current directory and wait for the input.
+
+Output format: / > _
+
+Result: PASS.
+
+Test case 3.
+Description:
+-Go to "/" directory
+-Use "sesh -h" command
+
+Expected result:
+The programme should display parameters help and exit to the terminal.
+
+Output format:
+Usage:sesh [-hv]
+	-h, --help	Display this help and exit
+	-v, --version	Display version info and exit
+
+Result: PASS.
+
+Test case 4.
+Description:
+-Go to "/" directory
+-Use "sesh --help" command
+
+Expected result:
+The programme should display parameters help and exit to the terminal.
+
+Output format is the same as "Test case 3".
+
+Result: PASS.
+
+Test case 5.
+Description:
+-Go to "/" directory
+-Use "sesh -v" command
+
+Expected result:
+The programme should display current version of the programme and exit.
+
+Output format:
+Version: sesh 0.1.0
+
+Result: PASS.
+
+Test case 6.
+Description:
+-Go to "/" directory
+-Use "sesh --version" command
+
+Expected result:
+The programme should display current version of the programme and exit.
+
+Output format:
+Version: sesh 0.1.0
+
+Result: PASS.
+
+
+Test case 7.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "help" and press <ENTER>
+
+Expected result: the programme should display helpfile and return to input.
+
+Output format:
+
+cd:
+	cd        changes current directory to "/home/username"
+	cd [..]   returns to the previous directory
+	cd [some_directory]   changes current directory to "some_directory", situated in current
+	cd [/some_directory]  changes current directory to root "some directory"
+exit          exits the programme
+filename      opens file with name "filename", situated in current directory
+help          shows full information about all available commands
+history       shows history of inputted commands
+ls:
+	ls        shows list of files and directories in current directory
+	ls [some_directory]   show list of files and directories in "current_directory/some_directory/"
+	ls [/some_directory]  show list of files and directories in root "some directory"
+
+all commands are going without []
+
+
+Result: PASS.
+
+Test case 8.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "history" and press <ENTER>
+
+Expected result: the programme should display history of entered commands with index numbers and return to input.
+
+Output format:
+1 help
+2 history
+/ > _
+
+Result: PASS.
+
+Test case 9.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "cd media" and press <ENTER>
+-Enter "cd .." and press <ENTER>
+-Enter "cd /usr/bin" and press <ENTER>
+-Enter "cd ../.." and press <ENTER>
+
+Expected result:
+The programme should change directory to "/media" (using relative adressing), then change directory to the parent directory "/", then change directory to "/usr/bin" (using absolute adressing), then change directory up for two folders to "/" and finally return to input.
+
+Output format:
+/ > cd media
+/media > cd ..
+/ > cd /usr/bin
+/usr/bin > cd ../..
+/ > _
+
+
+Result: PASS.
+
+Test case 10.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "echo fubar" and press <ENTER>
+
+Expected result:
+The programme should launch "echo" file from PATH which displays "fubar" message and then return to the input.
+
+Output format:
+fubar
+/ > _
+
+Result: PASS.
+
+Test case 11.
+Description:
+-Go to "...sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "./hw -f -g" and press <ENTER>
+
+Expected result:
+The programme should launch special "hw" testfile with "-f" and "-g" parameters from the current directory (sesh/src) and return to input.
+
+Output format:
+Hello world!
+-f -g argument(s) entered.
+/ > _
+
+Result: PASS.
+
+Test case 12.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "exit" and press <ENTER>
+
+Expected result: the programme should exit and return to the terminal.
+
+Output format - none.
+
+Result: PASS.
+
+Test case 13.
+Description:
+-Go to ".../sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "exit" and press <ENTER>
+
+Expected result:
+The programme should list files and directories with theit types in current directory "sesh/src" and return to input.
+
+Output format:
+autocomplete.c	regular		1411 bytes
+deps		directory	
+dir.c		regular		2361 bytes
+exec.c		regular		908 bytes
+help.c		regular		574 bytes
+history.c	regular		2083 bytes
+hw		regular		6646 bytes
+inc 		directory
+Makefile 	regular		852 bytes
+repl.c		regular		4462 bytes
+sesh.c		regular		1661 bytes
+share		directory	
+term.c		regular		709 bytes
+/media/sf_Shared/sesh/src > _
+
+Result: PASS.
+
+Test case 14.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "ls /home" and press <ENTER>
+
+Expected result:
+The programme should list files and directories in "/home" directory (using absolute adressing) and return to input.
+
+Output format:
+work		directory
+/ > _
+
+Result: PASS.
+
+Test case 15.
+Description:
+-Go to ".../sesh/src/share" directory
+-Use "sesh" command to run sesh.
+-Enter "ls" and press <ENTER>
+
+
+Expected result:
+The programme should list files and directories in parent directory ".../sesh/src" and return to input.
+
+Output format is the same as in test case 13.
+
+Result: PASS.
+
+Test case 16.
+Description:
+-Go to ".../sesh" directory
+-Use "sesh" command to run sesh.
+-Enter "ls src" and press <ENTER>
+
+Expected result: the programme should list files and directories in ".../sesh/src" directory and return to input.
+
+Output format is the same as in test case 13.
+
+Result: PASS.
+
+Test case 17.
+Description:
+-Go to ".../sesh" directory
+-Use "sesh" command to run sesh.
+-Enter "cd" and press <ENTER>
+
+Expected result: the programme should change directory to home directory ("/root") and return to input.
+
+Output format:
+/root > _
+
+Result: PASS.
+
+
+Test case 18.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Press <ENTER>
+
+Expected result: the programme should do nothing and return to input.
+
+Output format:
+/ > _
+
+Result: PASS.
+
+Test case 19.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "42" and press <BACKSPACE>
+
+Expected result: the programme should erase previous character and get "4" in the entered command.
+
+Output format:
+/ > 4_
+
+Result: PASS.
+
+Test case 20.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "sesh" and press <ENTER>
+-Enter "exit" and press <ENTER>
+
+Expected result: the programme should run sesh being in sesh. Then the second sesh should exit and return to input to the first run sesh.
+/ > exit
+/ > _
+
+Result: PASS.
+
+Test case 21.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "git commit -m "finished testing"" and press <ENTER>
+
+Expected result: the programme should run git with arguments "commit" "-m" and "finished testing" being in sesh.
+
+Result: PASS.
+
+
+Test case 23.
+Description:
+Pressing "up" arrow and <ENTER> in sesh from sesh.
+
+Expected result: the programme should run previous entered command being in sesh.
+
+Result: PASS.
+
+Test case 24.
+Description:
+Pressing "up" and then "down" arrow, then entering "ls" command in sesh from sesh.
+
+Expected result: the programme should run "ls" command being in sesh.
+
+Result: FAIL.
+
+Test case 25.
+Description:
+Pressing "up" arrow twice and then "down" arrow in sesh from sesh.
+
+Expected result: the programme should run previous entered command being in sesh.
+
+Result: PASS.
+
+Test case 26.
+Description:
+Entering "./Ma" and pressing <TAB> in sesh from src.
+
+Expected result: the programme should autocomplete entered command to "./Makefile".
+
+Result: FAIL.
+
+Test case 27.
+Description:
+Entering "Ma" and pressing <TAB> in sesh from src.
+
+Expected result: the programme should autocomplete entered command to "Makefile".
+
+Result: PASS.
+
+Test case 28.
+Description:
+Entering "lol" and pressing <TAB> in sesh from src.
+
+Expected result: the programme should do nothing.
+
+Result: FAIL.
+
+Test case 29.
+Description:
+Entering "h" and pressing <TAB> in sesh from src.
+
+Expected result: the programme should list all the files starting with the letter "h" in src directory.
+
+Result: PASS.
