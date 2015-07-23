@@ -2,6 +2,7 @@
 SRC_FILES = $(wildcard *.c)
 OBJ_FILES = $(SRC_FILES:%.c=../obj/%.o)
 INSTALL_PATH?=/usr
+CFLAGS = -std=c99
 
 INC=-I./
 
@@ -13,11 +14,11 @@ dirs:
 
 ../bin/sesh: $(OBJ_FILES) ../obj/argtable3.o
 	@echo Linking sesh...
-	@gcc $(OBJ_FILES) ../obj/argtable3.o -o $@ 
+	@gcc $(OBJ_FILES) ../obj/argtable3.o -o $@
 
 $(OBJ_FILES): ../obj/%.o: %.c
 	@echo Compiling $<...
-	@gcc $< -c -o $@ $(INC)
+	@gcc $< -c -o $@ $(INC) $(CFLAGS)
 
 clean:
 	@echo Cleaning...
