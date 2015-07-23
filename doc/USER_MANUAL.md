@@ -1,21 +1,23 @@
 #SESH
-*sesh* is a copy of a Unix shell - it is a command-line interpreter that provides a traditional user interface for the Unix and Unix-like operating systems.
+*sesh* is an analogue of a Unix shell - it is a command-line interpreter that provides a traditional user interface for the Unix and Unix-like operating systems.
 
 #COMMANDS
 There are implemented such commands, as:
-| Command | Keys (No key, if the field is empty) |Description |
-|-------|--|------|
+
+
+Command | Keys (No key, if the field is empty) | Description
+--------|--------------------------------------|------------
 cd | |Changes Directory to dirname
 cd | _**..**_ |Returns to the previous Directory
-cd | _**some_directory**_ |   Changes current Directory to _**some_directory**_, situated in current
-cd | _**/some_directory**_ |  Changes current Directory to root _**some directory**_
+cd | _**some_directory**_ | Changes current Directory to _**some_directory**_, situated in current
+cd | _**/some_directory**_ | Changes current Directory to root _**some directory**_
 ls| | Shows the list of files and directories in current directory
-ls | _**some_directory**_ |   Show the list of files and directories in _**current_directory/some_directory/**_
-ls | _**/some_directory**_ |  Show the list of files and directories in root _**some directory**_
+ls | _**some_directory**_ | Show the list of files and directories in _**current_directory/some_directory/**_
+ls | _**/some_directory**_ | Show the list of files and directories in root _**some directory**_
 filename| | Opens file with name _**filename**_, situated in current directory
 exit| |Quit the sesh
 help| |Shows full information about available commands
-history| |Shows history of previously inputted commands 
+history| |Shows history of previously inputted commands
 
 * For user convenience there is a _**navigation through the history**_. 
 	You can use _**UP ARROW KEY**_ to iterate through previous commands and _**DOWN ARROW KEY**_  to scroll the history down.
