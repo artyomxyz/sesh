@@ -34,6 +34,14 @@ void remove_char_from_buffer() {
 	}
 }
 
+/* Description:
+*	This function erases one character from the input field.
+*  Receives:
+*	void
+*  Returnes:
+*	void
+*/
+
 void erase_char() {
 	write(STDOUT_FILENO, "\b \b", 3);
 	cur--;
@@ -41,12 +49,20 @@ void erase_char() {
 	
 	remove_char_from_buffer();
 
-	if (*cur >= 128) {
+	if (*cur >= 128) { //if the character was two-byte character
 		cur--;
 		len--;
 		remove_char_from_buffer();
 	}
 }
+
+/* Description:
+*	It cleans the input line to the end of prompt and displays a new received command.
+*  Receives:
+*	unsigned char* new_buffer -  A string that contains a new command, that were found in the history by the navigation by up-down arrows by user.
+*  Returnes:
+*	void
+*/
 
 void replace_buf(unsigned char* new_buffer) {
 	while (cur > buff) {
@@ -60,6 +76,16 @@ void replace_buf(unsigned char* new_buffer) {
 	len = cur - buff;
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
+
+/* Description:
+*	Parses a string to the argv array and returns the number of arguments
+*  Receives:
+*	unsigned char* buff - A pointer to a string, which was inputted by user.
+*	char** argv - A pointer to an array of strings consisting of these arguments.
+*  Returnes:
+*	int parse_args - The number of arguments in the inputted command.
+*/
+
 
 int parse_args(unsigned char* buff, char** argv) {
 	int argc = 0;
@@ -99,6 +125,14 @@ int parse_args(unsigned char* buff, char** argv) {
 
 	return argc;
 }
+
+/* Description:
+*	It displays the current directory and makes a prompt for entering commands by the user.
+*  Receives:
+*	void
+*  Returnes:
+*	void
+*/
 
 void print_prompt() {
 	char cwd[256];
