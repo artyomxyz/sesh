@@ -14,7 +14,8 @@ cd | _**/some_directory**_ | Changes current Directory to root _**some directory
 ls| | Shows the list of files and directories in current directory
 ls | _**some_directory**_ | Show the list of files and directories in _**current_directory/some_directory/**_
 ls | _**/some_directory**_ | Show the list of files and directories in root _**some directory**_
-filename| | Opens file with name _**filename**_, situated in current directory
+filename| | Opens file with name _**filename**_, situated in the PATH
+./filename| | Opens file with name _**filename**_, situated in current directory
 exit| |Quit the sesh
 help| |Shows full information about available commands
 history| |Shows history of previously inputted commands
