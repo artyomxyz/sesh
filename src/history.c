@@ -87,10 +87,11 @@ void history_save_cmd(char* cmd) {
 *  Receives:
 *	int i - number of required command
 *  Returnes: 
-*	his_entry - a pointer to the command
+*	history_entry - a pointer to the name of command
 */
 
 char history_entry_buff[256];
+
 char* history_entry(int i) {
 	if ((hist_count-i-1) >= 0) {
 		return history_entries[hist_count-i-1];
