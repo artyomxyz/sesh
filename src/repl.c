@@ -311,6 +311,7 @@ void repl() {
 		}
 
 		if (j == 4 && argc > 0) {
+			sleep(0.5);
 			exec_cmd(argc, argv);
 		}
 	}
