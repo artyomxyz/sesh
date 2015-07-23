@@ -21,14 +21,31 @@
 
 unsigned char buff[1024], buffcpy[1024];
 unsigned char* cur;
+unsigned int len;
+
+void remove_char_from_buffer() {
+	for (unsigned char* i = cur ; i<=buff+len ; i++) {
+		*i = *(i+1);
+		write(STDOUT_FILENO, i, 1);
+	}
+	write(STDOUT_FILENO, " ", 1);
+	for (unsigned char* i = cur ; i<=buff+len ; i++) {
+		write(STDOUT_FILENO, "\b", 1);
+	}
+}
 
 void erase_char() {
 	write(STDOUT_FILENO, "\b \b", 3);
 	cur--;
+	len--;
+	
+	remove_char_from_buffer();
+
 	if (*cur >= 128) {
 		cur--;
+		len--;
+		remove_char_from_buffer();
 	}
-	*(cur) = '\0';
 }
 
 void replace_buf(unsigned char* new_buffer) {
@@ -40,6 +57,7 @@ void replace_buf(unsigned char* new_buffer) {
 	}
 
 	*(cur) = '\0';
+	len = cur - buff;
 	write(STDOUT_FILENO, buff, strlen(buff));
 }
 
@@ -78,7 +96,7 @@ int parse_args(unsigned char* buff, char** argv) {
 		}
 	}
 	argv[argc] = NULL;
-	
+
 	return argc;
 }
 
@@ -110,6 +128,7 @@ void repl() {
 		// Read
 		cur = buff;
 		*cur = '\0';
+		len = 0;
 
 		unsigned char* command = NULL;
 		int history_index = 0;
@@ -150,10 +169,15 @@ void repl() {
 								}
 								break;
 							case KEY_SC_RIGHT:
-								// write(STDOUT_FILENO, "right", 5);
+								if (cur < buff+len) {
+									write(STDOUT_FILENO, cur++, 1);
+								}
 								break;
 							case KEY_SC_LEFT:
-								// write(STDOUT_FILENO, "left", 4);
+								if (cur > buff) {
+									write(STDOUT_FILENO, "\b", 1);
+									cur--;
+								}
 								break;
 						}
 					}
@@ -188,9 +212,33 @@ void repl() {
 					break;
 
 				default:
-					write(STDOUT_FILENO, &c, 1);
+					len++;
+					for (unsigned char* i = buff + len ; i>cur ; i--) {
+						*i = *(i-1);
+					}
+
 					*(cur++) = c[0];
-					*(cur+1) = '\0';
+
+					int j = 0;
+
+					if (c[0] >= 128) {
+						read(STDIN_FILENO, c, 1);
+						len++;
+						for (unsigned char* i = buff + len ; i>cur ; i--) {
+							*i = *(i-1);
+						}
+
+						*(cur++) = c[0];
+						j=1;
+					}
+
+					for (unsigned char* i = cur-1-j ; i<buff+len ; i++) {
+						write(STDOUT_FILENO, i, 1);
+					}
+
+					for (unsigned char* i = cur ; i<buff+len ; i++) {
+						write(STDOUT_FILENO, "\b", 1);
+					}
 					break;
 			}
 		}
