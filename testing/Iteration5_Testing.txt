@@ -58,7 +58,7 @@ Expected result:
 The programme should display current version of the programme and exit.
 
 Output format:
-Version: sesh 0.1.0
+Version: sesh 0.4.0
 
 Result: PASS.
 
@@ -71,7 +71,7 @@ Expected result:
 The programme should display current version of the programme and exit.
 
 Output format:
-Version: sesh 0.1.0
+Version: sesh 0.4.0
 
 Result: PASS.
 
