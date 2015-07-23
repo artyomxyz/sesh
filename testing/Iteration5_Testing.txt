@@ -159,17 +159,17 @@ Result: PASS.
 
 Test case 11.
 Description:
--Go to "...sesh/src" directory
+-Go to "...sesh/testing" directory
 -Use "sesh" command to run sesh.
 -Enter "./hw -f -g" and press <ENTER>
 
 Expected result:
-The programme should launch special "hw" testfile with "-f" and "-g" parameters from the current directory (sesh/src) and return to input.
+The programme should launch special "hw" testfile with "-f" and "-g" parameters from the current directory (sesh/testing) and return to input.
 
 Output format:
 Hello world!
 -f -g argument(s) entered.
-/ > _
+/media/sf_Shared/sesh/testing > _
 
 Result: PASS.
 
@@ -276,6 +276,7 @@ Description:
 Expected result: the programme should do nothing and return to input.
 
 Output format:
+/ >
 / > _
 
 Result: PASS.
@@ -312,63 +313,129 @@ Description:
 -Use "sesh" command to run sesh.
 -Enter "git commit -m "finished testing"" and press <ENTER>
 
-Expected result: the programme should run git with arguments "commit" "-m" and "finished testing" being in sesh.
+Expected result: the programme should run git with arguments "commit" "-m" and "finished testing" and return to input.
+
+Output format:
+[master 19b4091] "finished testing"
+ 2 files changed, 382 insertions (+), 9 deletions(-)
+ create mode 100644 testing/Iteration5_Testing.txt
+/ > _
+
 
 Result: PASS.
 
 
+Test case 22.
+Description:
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "cd ." and press <ENTER>
+-Press <UP ARROW>
+-Press <ENTER>
+
+Expected result: the programme should run previous entered command (cd .) and return to input.
+
+Output format:
+/ > cd .
+/ > cd .
+/ > _
+
+Result: PASS.
+
 Test case 23.
 Description:
-Pressing "up" arrow and <ENTER> in sesh from sesh.
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "cd ." and press <ENTER>
+-Press <UP ARROW>
+-Press <DOWN ARROW>
+-Press <ENTER>
 
-Expected result: the programme should run previous entered command being in sesh.
+Expected result: the programme should run "cd ." and then do nothing.
+
+Output format:
+/ > cd .
+/ >
+/ > _
 
 Result: PASS.
 
 Test case 24.
 Description:
-Pressing "up" and then "down" arrow, then entering "ls" command in sesh from sesh.
+-Go to "/" directory
+-Use "sesh" command to run sesh.
+-Enter "cd ." and press <ENTER>
+-Press <UP ARROW>
+-Press <UP ARROW>
+-Press <DOWN ARROW>
+-Press <ENTER>
 
-Expected result: the programme should run "ls" command being in sesh.
+Expected result: the programme should run previous entered command (cd .) and return to input.
 
-Result: FAIL.
+Output format:
+/ > cd .
+/ > cd .
+/ > _
+
+Result: PASS.
 
 Test case 25.
 Description:
-Pressing "up" arrow twice and then "down" arrow in sesh from sesh.
+-Go to ".../sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "cat Ma" and press <ENTER>
+-Press <TAB>
 
-Expected result: the programme should run previous entered command being in sesh.
+Expected result:
+The programme should autocomplete entered command to "cat Makefile".
+
+Output format:
+/media/sf_Shared/sesh/src > cat Makefile
 
 Result: PASS.
 
 Test case 26.
-Description:
-Entering "./Ma" and pressing <TAB> in sesh from src.
+-Go to ".../sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "lol" and press <ENTER>
+-Press <TAB>
 
-Expected result: the programme should autocomplete entered command to "./Makefile".
+Expected result: the programme should still wait for the input with "lol" in commandline.
 
-Result: FAIL.
+Output format:
+/media/sf_Shared/sesh/src > lol
+
+Result: PASS.
 
 Test case 27.
 Description:
-Entering "Ma" and pressing <TAB> in sesh from src.
+-Go to ".../sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "h" and press <ENTER>
+-Press <TAB>
 
-Expected result: the programme should autocomplete entered command to "Makefile".
+Expected result: the programme should list all the files starting with the letter "h" in src directory and return to input.
+
+Output format:
+help.c
+history.c
+/media/sf_Shared/sesh/src > _
 
 Result: PASS.
 
 Test case 28.
 Description:
-Entering "lol" and pressing <TAB> in sesh from src.
+-Go to ".../sesh/src" directory
+-Use "sesh" command to run sesh.
+-Enter "hi"
+-Press <LEFT ARROW>
+-Press l
+-Press <BACKSPACE>
+-Press <RIGHT ARROW>
 
-Expected result: the programme should do nothing.
+Expected result: the programme should move the cursor one sign left (between "h" and "i"). Then it should type "l" letter (we shoud get "hli"). Then it should erase the "l" letter (we should get "hi"). Then the cursor should get back to the end of input.
 
-Result: FAIL.
-
-Test case 29.
-Description:
-Entering "h" and pressing <TAB> in sesh from src.
-
-Expected result: the programme should list all the files starting with the letter "h" in src directory.
+Output format:
+/media/sf_Shared/sesh/src > hi_
 
 Result: PASS.
